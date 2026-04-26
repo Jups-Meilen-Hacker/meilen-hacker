@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#F5F4F0"/>
+<title>Meilen-Hacker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;700;900&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-bottom:100px}
+body{font-family:'Familjen Grotesk',sans-serif;background:#F5F4F0;color:#1A1A1A;min-height:100vh;overscroll-behavior:none}
+
+:root{
+  --bg:#F5F4F0;
+  --bg2:#EDECEA;
+  --s1:#FFFFFF;
+  --s2:#F0EFEB;
+  --s3:#E8E7E2;
+  --b1:rgba(0,0,0,0.07);
+  --b2:rgba(0,0,0,0.11);
+  --b3:rgba(0,0,0,0.18);
+  --gold:#E8650A;
+  --gold2:#FF7A20;
+  --gold3:#FFB080;
+  --gold-d:rgba(232,101,10,0.10);
+  --gold-d2:rgba(232,101,10,0.05);
+  --cream:#1A1A1A;
+  --cream2:#3A3A3A;
+  --cream3:#6A6A6A;
+  --teal:#0A8F7A;
+  --teal-d:rgba(10,143,122,0.09);
+  --rust:#E8650A;
+  --rust-d:rgba(232,101,10,0.10);
+  --sky:#FF7A20;
+  --sky-d:rgba(255,122,32,0.10);
+  --muted:#9A9A9A;
+  --muted2:#6A6A6A;
+  --mono:'DM Mono',monospace;
+  --serif:'Familjen Grotesk',sans-serif;
+  --sans:'Familjen Grotesk',sans-serif;
+}
+
+.app{max-width:480px;margin:0 auto;padding-bottom:120px}
+
+/* ── Topbar ── */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  background:rgba(245,244,240,0.96);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--b1);
+  padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo{
+  font-family:var(--serif);font-size:18px;font-style:italic;
+  color:var(--gold2);letter-spacing:0.02em;display:flex;align-items:center;gap:8px;
+}
+.logo-mark{font-size:14px;font-style:normal}
+.status-pill{
+  display:flex;align-items:center;gap:6px;
+  border:1px solid var(--b2);border-radius:20px;padding:5px 12px;
+  background:var(--s1);
+}
+.sdot{width:6px;height:6px;border-radius:50%;background:#E8650A;animation:blink 2.5s infinite}
+.sdot.live{background:var(--teal)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.status-pill span{font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:.08em}
+
+/* ── Bottom Nav ── */
+.bnav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:480px;
+  background:rgba(245,244,240,.97);backdrop-filter:blur(24px);
+  border-top:1px solid var(--b1);
+  padding:8px 8px 22px;
+  display:flex;justify-content:space-around;z-index:200;
+}
+.ni{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;padding:7px 14px;border-radius:12px;
+  transition:background .15s;border:none;background:transparent;min-width:60px;
+}
+.ni-icon{font-size:18px}
+.ni-lbl{font-size:9px;font-family:var(--mono);color:var(--muted);letter-spacing:.07em;text-transform:uppercase}
+.ni.active .ni-lbl{color:var(--gold2)}
+.ni.active .ni-icon{filter:drop-shadow(0 0 4px rgba(200,152,58,.5))}
+
+/* ── Pages ── */
+.page{display:none}.page.show{display:block}
+
+/* ── Hero ── */
+.hero{padding:28px 20px 18px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,rgba(232,101,10,.05) 0%,transparent 60%);pointer-events:none}
+.hero-tag{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px}
+.hero h1{font-family:'Familjen Grotesk',sans-serif;font-size:32px;font-weight:900;line-height:1.1;letter-spacing:-.03em;margin-bottom:8px;color:#1A1A1A;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--gold2)}
+.hero-sub{font-size:13px;color:var(--muted2);line-height:1.6;font-weight:300;max-width:300px}
+
+/* ── Cards ── */
+.card{margin:0 16px 12px;background:#FFFFFF;border:1px solid var(--b1);border-radius:18px;overflow:hidden}
+.card-hdr{
+  padding:13px 16px;
+  font-family:var(--mono);font-size:10px;color:var(--muted);
+  letter-spacing:.1em;text-transform:uppercase;
+  border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.card-hdr-act{color:var(--gold2);cursor:pointer}
+.card-body{padding:14px 16px}
+
+/* ── Form ── */
+.field{margin-bottom:12px}.field:last-child{margin-bottom:0}
+.field label{display:block;font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.field select,.field input{
+  width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:10px;
+  color:#1A1A1A;font-family:var(--sans);font-size:14px;padding:11px 13px;
+  appearance:none;-webkit-appearance:none;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.field select:focus,.field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,101,10,.1)}
+.field select option{background:#FFFFFF}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+
+/* ── Program toggles ── */
+.prog-row{display:flex;gap:8px}
+.ptog{
+  flex:1;padding:10px 6px;background:var(--s2);border:1px solid var(--b2);
+  border-radius:11px;color:var(--muted);font-size:11px;font-family:var(--mono);
+  font-weight:500;text-align:center;cursor:pointer;transition:all .15s;user-select:none;
+}
+.ptog .ps{font-size:9px;font-weight:300;color:var(--muted);margin-top:3px;display:block;line-height:1.2}
+.ptog.on.mm{border-color:var(--gold);color:var(--gold2);background:var(--gold-d)}.ptog.on.mm .ps{color:rgba(200,152,58,.6)}
+.ptog.on.fb{border-color:var(--sky);color:var(--sky);background:var(--sky-d)}.ptog.on.fb .ps{color:rgba(126,184,212,.6)}
+.ptog.on.ba{border-color:var(--rust);color:#E08060;background:var(--rust-d)}.ptog.on.ba .ps{color:rgba(196,106,58,.6)}
+
+/* ── Slider ── */
+.sl-row{display:flex;align-items:center;gap:12px}
+.sl-row input[type=range]{flex:1;height:3px;background:var(--s2);border-radius:2px;outline:none;-webkit-appearance:none;border:none;padding:0;cursor:pointer}
+.sl-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold2);cursor:pointer;box-shadow:0 0 6px rgba(232,101,10,.4)}
+.sl-val{font-family:var(--mono);font-size:13px;color:var(--gold2);min-width:40px;text-align:right}
+
+/* ── Primary button ── */
+.btn-primary{
+  width:calc(100% - 32px);margin:0 16px 14px;padding:15px;
+  background:var(--gold2);color:#FFFFFF;border:none;border-radius:14px;
+  font-family:var(--sans);font-size:15px;font-weight:600;
+  cursor:pointer;letter-spacing:.03em;
+  transition:opacity .2s,transform .1s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-primary:active{transform:scale(.98);opacity:.9}
+.btn-primary:disabled{opacity:.35;cursor:not-allowed;transform:none}
+
+/* ── Stats ── */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:0 16px 14px}
+.stat{background:#FFFFFF;border:1px solid var(--b1);border-radius:13px;padding:12px 9px;text-align:center}
+.sv{font-family:var(--mono);font-size:18px;font-weight:400;display:block;color:#1A1A1A}
+.sv.g{color:var(--teal)}.sv.gold{color:var(--gold2)}
+.sl-{font-size:10px;color:var(--muted);margin-top:3px;display:block;line-height:1.3}
+
+/* ── Results ── */
+.res-hdr{padding:3px 16px 9px;display:flex;align-items:center;justify-content:space-between}
+.res-hdr span{font-size:11px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.sort-sel{background:transparent;border:none;color:var(--gold2);font-family:var(--mono);font-size:11px;outline:none;cursor:pointer;padding:0}
+.sort-sel option{background:#FFFFFF}
+
+/* ── Deal card ── */
+.deals{padding:0 16px}
+.deal{
+  background:#FFFFFF;border:1px solid var(--b1);border-radius:20px;
+  padding:16px;margin-bottom:10px;position:relative;overflow:hidden;
+  animation:fadeUp .3s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.deal.top{border-color:rgba(232,101,10,.3)}
+.deal.top::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold2),transparent)}
+
+.deal-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.deal-tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.ptag{font-size:10px;font-family:var(--mono);padding:4px 10px;border-radius:20px;letter-spacing:.07em;text-transform:uppercase;font-weight:400}
+.ptag-mm{background:rgba(232,101,10,.15);color:var(--gold2);border:1px solid rgba(232,101,10,.2)}
+.ptag-fb{background:rgba(126,184,212,.12);color:var(--sky);border:1px solid rgba(126,184,212,.2)}
+.ptag-ba{background:rgba(196,106,58,.12);color:#E08060;border:1px solid rgba(196,106,58,.2)}
+.ptag-top{background:rgba(74,191,170,.12);color:var(--teal);border:1px solid rgba(74,191,170,.2)}
+.deal-m{text-align:right}
+.deal-miles{font-family:'Familjen Grotesk',sans-serif;font-size:22px;font-weight:900;line-height:1;color:#1A1A1A;letter-spacing:-.02em}
+.deal-mlbl{font-size:9px;color:var(--muted);margin-top:2px;display:block;letter-spacing:.08em;text-transform:uppercase}
+
+/* Route display */
+.deal-route{
+  background:#F0EFEB;border-radius:14px;padding:14px 16px;
+  display:flex;align-items:center;gap:8px;margin-bottom:12px;
+}
+.ap{font-family:'Familjen Grotesk',sans-serif;font-size:26px;font-weight:900;letter-spacing:-.01em;color:#1A1A1A}
+.rmid{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.rline-w{display:flex;align-items:center;gap:4px;width:100%}
+.rline{flex:1;height:1px;background:var(--b2)}
+.rplane{font-size:12px;opacity:.7}
+.ral{font-size:10px;color:var(--muted2);font-family:var(--mono);letter-spacing:.04em}
+
+/* Chips */
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.chip{font-size:11px;color:var(--muted2);background:var(--s2);padding:4px 9px;border-radius:20px;font-family:var(--mono)}
+.chip.g{color:var(--teal);background:var(--teal-d)}
+.chip.gold{color:var(--gold2);background:var(--gold-d)}
+
+/* Affordability */
+.afford{
+  display:flex;align-items:center;gap:10px;
+  background:#F0EFEB;border-radius:11px;padding:10px 13px;margin-bottom:12px;
+}
+.afford-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.afford-dot.yes{background:var(--teal)}
+.afford-dot.no{background:var(--rust)}
+.afford-txt{flex:1;font-size:12px;color:var(--muted2);line-height:1.4}
+.afford-txt strong{color:#1A1A1A;display:block;font-size:12px;font-weight:500;margin-bottom:1px}
+
+/* Eff bar */
+.eff-w{margin-bottom:12px}
+.eff-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.eff-lbl{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.eff-sc{font-family:var(--mono);font-size:13px}
+.eff-sc.h{color:var(--teal)}.eff-sc.m{color:var(--gold2)}.eff-sc.l{color:var(--muted2)}
+.eff-bar{height:3px;background:var(--s2);border-radius:2px;overflow:hidden}
+.eff-fill{height:100%;border-radius:2px;transition:width .8s cubic-bezier(.16,1,.3,1)}
+.eff-fill.h{background:var(--teal)}.eff-fill.m{background:var(--gold)}.eff-fill.l{background:var(--muted)}
+
+/* CPM row */
+.cpm-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}
+.cpm-c{background:#F0EFEB;border-radius:10px;padding:9px;text-align:center}
+.cpm-v{font-family:var(--mono);font-size:13px;font-weight:400;display:block;color:#1A1A1A}
+.cpm-l{font-size:9px;color:var(--muted);margin-top:2px;display:block;letter-spacing:.05em;text-transform:uppercase}
+
+/* Book button */
+.book-btn{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  width:100%;padding:11px;
+  background:transparent;border:1px solid var(--b3);
+  border-radius:11px;color:var(--gold2);
+  font-size:11px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;transition:background .15s,border-color .15s;
+}
+.book-btn:hover{background:var(--gold-d);border-color:rgba(232,101,10,.35)}
+
+/* ── WALLET ── */
+.wallet-hero{
+  background:linear-gradient(135deg,#FFFFFF 0%,#F5F4F0 100%);
+  border:1px solid var(--b2);border-radius:20px;
+  padding:22px;margin:0 16px 12px;position:relative;overflow:hidden;
+}
+.wallet-hero::after{
+  content:'';position:absolute;bottom:-30px;right:-30px;
+  width:140px;height:140px;
+  background:radial-gradient(circle,rgba(232,101,10,.08),transparent 70%);
+}
+.wh-tag{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+.wh-val{font-family:'Familjen Grotesk',sans-serif;font-size:36px;font-weight:900;color:var(--gold2);margin-bottom:4px;letter-spacing:-.02em;text-transform:uppercase}
+.wh-sub{font-size:13px;color:#6A6A6A;font-weight:400}
+
+.wallet-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 16px 12px}
+.wcard{background:#FFFFFF;border:1px solid var(--b1);border-radius:15px;padding:14px}
+.wcard-ico{font-size:18px;margin-bottom:8px;display:block}
+.wcard-lbl{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-bottom:5px}
+.wcard-val{font-family:var(--mono);font-size:17px;color:#1A1A1A;margin-bottom:2px}
+.wcard input{
+  width:100%;background:var(--s2);border:1px solid var(--b2);
+  border-radius:8px;color:#1A1A1A;font-family:var(--mono);font-size:13px;
+  padding:7px 9px;outline:none;margin-top:7px;
+  transition:border-color .2s;
+}
+.wcard input:focus{border-color:var(--gold)}
+.wcard-hint{font-size:9px;color:var(--muted);font-family:var(--mono);margin-top:4px;display:block;letter-spacing:.05em}
+
+/* Afford cards */
+.afford-grid{display:flex;flex-direction:column;gap:7px;padding:0 16px 12px}
+.acard{
+  background:var(--s1);border:1px solid var(--b1);border-radius:14px;
+  padding:13px 14px;display:flex;align-items:center;gap:12px;
+}
+.acard.yes{border-color:rgba(74,191,170,.2)}
+.acard.partial{border-color:rgba(232,101,10,.2)}
+.acard-ico{font-size:20px;flex-shrink:0}
+.acard-info{flex:1}
+.acard-title{font-size:13px;font-weight:500;margin-bottom:3px;color:#1A1A1A}
+.acard-desc{font-size:11px;color:var(--muted2);line-height:1.4;font-weight:300}
+.acard-badge{
+  font-family:var(--mono);font-size:10px;padding:4px 9px;
+  border-radius:20px;white-space:nowrap;font-weight:400;
+}
+.ab-yes{background:rgba(74,191,170,.12);color:var(--teal);border:1px solid rgba(74,191,170,.2)}
+.ab-partial{background:rgba(232,101,10,.12);color:var(--gold2);border:1px solid rgba(232,101,10,.2)}
+.ab-no{background:var(--s2);color:var(--muted);border:1px solid var(--b1)}
+
+/* Transfer items */
+.tr-list{display:flex;flex-direction:column;gap:7px}
+.tr-item{
+  background:#F5F4F0;border:1px solid var(--b2);border-radius:12px;
+  padding:11px 13px;display:flex;align-items:center;gap:10px;
+  cursor:pointer;transition:border-color .15s;
+}
+.tr-item:hover,.tr-item.sel{border-color:var(--gold);background:var(--gold-d2)}
+.tr-ico{font-size:18px;flex-shrink:0}
+.tr-info{flex:1}
+.tr-name{font-size:13px;font-weight:500;margin-bottom:2px;color:var(--cream)}
+.tr-rate{font-size:10px;color:var(--muted2);font-family:var(--mono)}
+.tr-val{font-family:var(--mono);font-size:15px;color:var(--gold2);text-align:right}
+.tr-val span{font-size:9px;color:var(--muted);display:block;text-align:right;margin-top:1px}
+
+/* Result box */
+.result-box{
+  border-radius:12px;padding:12px 14px;margin-top:10px;
+  display:flex;align-items:center;gap:10px;
+}
+.result-box.ok{background:rgba(74,191,170,.08);border:1px solid rgba(74,191,170,.2)}
+.result-box.warn{background:rgba(232,101,10,.08);border:1px solid rgba(232,101,10,.2)}
+.result-box-ico{font-size:18px;flex-shrink:0}
+.result-box-txt{font-size:12px;color:var(--muted2);line-height:1.5}
+.result-box-txt strong{color:#1A1A1A;font-size:13px;display:block;margin-bottom:2px;font-weight:500}
+
+/* Payback convert */
+.pb-result{
+  background:#F0EFEB;border-radius:11px;padding:12px 14px;
+  margin-top:10px;font-family:var(--mono);font-size:12px;
+  color:var(--muted2);line-height:1.8;
+}
+.pb-result .big{font-family:var(--serif);font-size:22px;color:var(--gold2);display:block;margin:4px 0 2px}
+
+/* ── AMEX ── */
+.amex-hero{
+  background:linear-gradient(135deg,#FFF8F3 0%,#FFF2E8 100%);
+  border:1px solid rgba(232,101,10,.2);border-radius:20px;
+  margin:0 16px 12px;padding:20px;position:relative;overflow:hidden;
+}
+.amex-hero::before{
+  content:'';position:absolute;top:-20px;right:-20px;
+  width:100px;height:100px;
+  background:radial-gradient(circle,rgba(232,101,10,.15),transparent 70%);
+}
+.amex-tag{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+.amex-title{font-family:'Familjen Grotesk',sans-serif;font-size:22px;font-weight:900;color:#1A1A1A;margin-bottom:4px;text-transform:uppercase}
+.amex-sub{font-size:12px;color:var(--muted2);font-weight:300}
+
+.prog-bar-wrap{margin:0 16px 12px;background:#FFFFFF;border:1px solid var(--b1);border-radius:15px;padding:15px}
+.prog-bar-title{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-bottom:12px}
+.pb-row{margin-bottom:10px}.pb-row:last-child{margin-bottom:0}
+.pb-rhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.pb-rname{font-size:12px;font-weight:500;color:#3A3A3A}
+.pb-rpct{font-family:var(--mono);font-size:11px;color:var(--gold2)}
+.pb-bg{height:4px;background:var(--s2);border-radius:2px;overflow:hidden}
+.pb-fill{height:100%;border-radius:2px;background:var(--gold2);transition:width .6s ease}
+
+.ben-list{display:flex;flex-direction:column;gap:8px}
+.ben{
+  background:#FFFFFF;border:1px solid var(--b1);border-radius:15px;
+  padding:14px 15px;display:flex;align-items:flex-start;gap:12px;
+  transition:border-color .15s;
+}
+.ben.used{border-color:rgba(74,191,170,.18);background:rgba(74,191,170,.02)}
+.ben.unused{border-color:rgba(232,101,10,.12)}
+.ben-ico{font-size:20px;flex-shrink:0;margin-top:1px}
+.ben-body{flex:1}
+.ben-title{font-size:13px;font-weight:500;color:#1A1A1A;margin-bottom:3px}
+.ben-desc{font-size:11px;color:var(--muted2);line-height:1.5;font-weight:300;margin-bottom:6px}
+.ben-val{font-family:var(--mono);font-size:11px;margin-bottom:7px}
+.ben-val.g{color:var(--teal)}.ben-val.gold{color:var(--gold2)}
+.ben-tog{
+  display:inline-flex;align-items:center;gap:7px;cursor:pointer;
+  font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:.06em;
+}
+.tog-box{
+  width:16px;height:16px;border-radius:4px;border:1px solid var(--b3);
+  background:var(--s2);display:flex;align-items:center;justify-content:center;
+  transition:all .15s;flex-shrink:0;font-size:10px;color:transparent;
+}
+.tog-box.on{background:var(--teal);border-color:var(--teal);color:#fff}
+
+/* ── PAYBACK FEED ── */
+.ai-banner{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(74,191,170,.06);border:1px solid rgba(74,191,170,.15);
+  border-radius:11px;padding:10px 13px;margin:0 16px 12px;
+}
+.ai-banner-txt{flex:1;font-size:12px;color:var(--muted2);line-height:1.4}
+.ai-banner-txt strong{color:var(--teal)}
+.ai-refresh{
+  background:transparent;border:1px solid rgba(74,191,170,.25);
+  border-radius:8px;padding:5px 10px;font-family:var(--mono);
+  font-size:10px;color:var(--teal);cursor:pointer;white-space:nowrap;
+  transition:background .15s;
+}
+.ai-refresh:hover{background:var(--teal-d)}
+
+.sec-lbl{
+  font-family:var(--mono);font-size:10px;color:var(--muted);
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:4px 16px 8px;
+}
+
+.pb-deal{
+  background:#FFFFFF;border:1px solid var(--b1);border-radius:15px;
+  padding:13px 15px;margin-bottom:8px;
+  display:flex;align-items:center;gap:12px;
+}
+.pb-multi{
+  font-family:var(--serif);font-size:22px;font-style:italic;
+  color:var(--gold2);min-width:48px;text-align:center;line-height:1;
+}
+.pb-multi small{font-family:var(--mono);font-size:9px;color:var(--muted);display:block;font-style:normal;letter-spacing:.06em;margin-top:2px}
+.pb-info{flex:1}
+.pb-name{font-size:13px;font-weight:500;color:#1A1A1A;margin-bottom:2px}
+.pb-desc{font-size:11px;color:var(--muted2);font-weight:300;line-height:1.4;margin-bottom:4px}
+.pb-exp{font-family:var(--mono);font-size:10px;color:var(--rust)}
+.pb-cat{
+  font-size:10px;font-family:var(--mono);
+  padding:3px 8px;border-radius:20px;
+  background:var(--s2);color:var(--muted2);
+  border:1px solid var(--b1);
+}
+
+/* ── Divider ── */
+.div{height:1px;background:var(--b1);margin:8px 0}
+
+/* ── Utility ── */
+.hidden{display:none!important}
+.empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;line-height:1.7}
+.empty .big{font-family:var(--serif);font-size:40px;font-style:italic;color:var(--gold);margin-bottom:14px;display:block}
+.loader-wrap{text-align:center;padding:40px 20px}
+.loader{display:inline-flex;gap:5px;margin-bottom:14px}
+.loader span{width:7px;height:7px;background:var(--gold);border-radius:50%;animation:bounce 1.2s infinite}
+.loader span:nth-child(2){animation-delay:.15s}
+.loader span:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.load-txt{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="logo"><span class="logo-mark">✦</span> Meilen-Hacker</div>
+  <div class="status-pill"><span class="sdot" id="sdot"></span><span id="stxt">DEMO</span></div>
+</div>
+
+<!-- ══════ WALLET ══════ -->
+<div class="page show" id="page-wallet">
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-tag">Punkte-Portfolio</div>
+    <h1>Dein<br><em>Wallet</em></h1>
+    <p class="hero-sub">Alle Punkte im Blick — was kannst du dir heute leisten?</p>
+  </div>
+
+  <div class="wallet-hero">
+    <div class="wh-tag">Gesamtwert (3 ct / Meile)</div>
+    <div class="wh-val" id="totalEur">—</div>
+    <div class="wh-sub" id="totalMiles">Punkte eingeben</div>
+  </div>
+
+  <div style="margin:0 16px 12px;background:#FFF8F0;border:1px solid rgba(232,101,10,.2);border-radius:14px;padding:13px 15px">
+    <div style="font-family:var(--mono);font-size:10px;color:var(--gold2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">✦ Deine 3 Quellen — Strategie</div>
+    <div style="font-size:12px;color:#3A3A3A;line-height:1.7">
+      <strong style="color:#1A1A1A">Payback</strong> → Miles & More: <span style="color:var(--teal);font-weight:600">1:1</span> (beste Brücke zu M&M, mit Bonus bis 1:1,3)<br>
+      <strong style="color:#1A1A1A">Amex MR</strong> → M&M: <span style="color:var(--rust);font-weight:600">kein Direktweg!</span> Umweg: 3 MR → 1 PB → 1 Meile<br>
+      <strong style="color:#1A1A1A">Amex MR</strong> → Flying Blue / Avios / Aeroplan: <span style="color:var(--teal);font-weight:600">5:4</span> (empfohlen)
+    </div>
+  </div>
+
+  <div class="wallet-grid">
+    <div class="wcard">
+      <span class="wcard-ico">🏆</span>
+      <div class="wcard-lbl">Miles & More</div>
+      <input type="number" id="mm-bal" placeholder="150000" value="150000" oninput="updateWallet()"/>
+      <span class="wcard-hint">Meilen</span>
+    </div>
+    <div class="wcard">
+      <span class="wcard-ico">💳</span>
+      <div class="wcard-lbl">Amex MR</div>
+      <input type="number" id="amex-bal" placeholder="80000" value="80000" oninput="updateWallet()"/>
+      <span class="wcard-hint">Punkte</span>
+    </div>
+    <div class="wcard">
+      <span class="wcard-ico">🔴</span>
+      <div class="wcard-lbl">Payback</div>
+      <input type="number" id="pb-bal" placeholder="20000" value="20000" oninput="updateWallet()"/>
+      <span class="wcard-hint">Punkte</span>
+    </div>
+    <div class="wcard">
+      <span class="wcard-ico">✈</span>
+      <div class="wcard-lbl">Flying Blue</div>
+      <input type="number" id="fb-bal" placeholder="0" value="0" oninput="updateWallet()"/>
+      <span class="wcard-hint">Meilen</span>
+    </div>
+  </div>
+
+  <div class="sec-lbl">Was ist heute möglich?</div>
+  <div class="afford-grid" id="affordGrid"></div>
+
+  <div class="card">
+    <div class="card-hdr">Amex MR Transfer-Rechner <span class="card-hdr-act" onclick="calcTransfer()">aktualisieren</span></div>
+    <div class="card-body">
+      <div class="tr-list" id="trList"></div>
+      <div class="field" style="margin-top:12px">
+        <label>Benötigte Meilen</label>
+        <input type="number" id="neededMiles" placeholder="60000" value="60000" oninput="calcTransfer()"/>
+      </div>
+      <div id="trResult"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr">Payback → Miles & More</div>
+    <div class="card-body">
+      <div class="field">
+        <label>Payback Punkte umwandeln (1:1 Ratio)</label>
+        <input type="number" id="pb-conv" placeholder="10000" value="10000" oninput="calcPb()"/>
+      </div>
+      <div class="pb-result" id="pbResult"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr">✦ M&M Hotline — Insider-Vorteile</div>
+    <div class="card-body">
+      <div class="ben-list">
+        <div class="ben unused">
+          <span class="ben-ico" style="font-size:15px">◈</span>
+          <div class="ben-body">
+            <div class="ben-title">Telefonische Award-Buchung</div>
+            <div class="ben-desc">Über die Hotline (069 86 799 799) sind manchmal Verfügbarkeiten buchbar, die online nicht erscheinen — besonders für LH First Class und Partner-Airlines. Auch Upgrade-Anfragen laufen besser telefonisch.</div>
+            <div class="ben-val gold">Tipp: Morgens anrufen, Wartezeiten geringer</div>
+          </div>
+        </div>
+        <div style="height:1px;background:var(--b1);margin:8px 0"></div>
+        <div class="ben unused">
+          <span class="ben-ico" style="font-size:15px">◇</span>
+          <div class="ben-body">
+            <div class="ben-title">Komplexe Routings & Stopover</div>
+            <div class="ben-desc">Die Hotline kann Routings mit Stopover oder Open-Jaw buchen, die der Online-Buchungsassistent ablehnt. Damit lassen sich manchmal 2 Ziele für den Preis von einem kombinieren.</div>
+            <div class="ben-val g">Stopover für 0 extra Meilen möglich</div>
+          </div>
+        </div>
+        <div style="height:1px;background:var(--b1);margin:8px 0"></div>
+        <div class="ben unused">
+          <span class="ben-ico" style="font-size:15px">●</span>
+          <div class="ben-body">
+            <div class="ben-title">Meilentickets für Begleiter</div>
+            <div class="ben-desc">Über die Hotline lassen sich Prämienflüge für andere Personen buchen — ohne dass diese selbst M&M Mitglied sein müssen. Online nur für verknüpfte Konten möglich.</div>
+            <div class="ben-val gold">Nützlich für Familienreisen</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr">🌍 Zubringer-Strategie (kostenlos)</div>
+    <div class="card-body">
+      <div style="font-size:12px;color:var(--muted2);line-height:1.6;margin-bottom:12px">
+        Als M&M Mitglied kannst du von vielen europäischen Hubs als <strong style="color:#1A1A1A">kostenlosem Zubringer</strong> abfliegen — Preis richtet sich nach dem Hauptflug.
+      </div>
+      <div class="ben-list">
+        <div class="ben unused">
+          <span class="ben-ico" style="font-size:15px">◈</span>
+          <div class="ben-body">
+            <div class="ben-title">Von HAJ über FRA/MUC</div>
+            <div class="ben-desc">Hannover → Frankfurt/München als LH-Inlandszubringer zum Langstreckenpreis buchbar. Preis gilt für die Gesamtstrecke — der Zubringer kostet keine extra Meilen.</div>
+            <div class="ben-val g">HAJ → FRA → JFK = Preis für FRA → JFK</div>
+          </div>
+        </div>
+        <div style="height:1px;background:var(--b1);margin:8px 0"></div>
+        <div class="ben unused">
+          <span class="ben-ico" style="font-size:15px">◇</span>
+          <div class="ben-body">
+            <div class="ben-title">Europäische Positionierungsflüge</div>
+            <div class="ben-desc">Für bessere Award-Verfügbarkeit oder günstigere Einlösungen lohnt sich manchmal ein Billigflug nach AMS, CDG oder LHR, von wo aus das gewünschte Programm stärker verfügbar ist.</div>
+            <div class="ben-val gold">Beispiel: HAJ → CDG (Ryanair 29€) + Flying Blue Award CDG → NRT</div>
+          </div>
+        </div>
+        <div style="height:1px;background:var(--b1);margin:8px 0"></div>
+        <div class="ben unused">
+          <span class="ben-ico" style="font-size:15px">●</span>
+          <div class="ben-body">
+            <div class="ben-title">Sweet Spots mit Zubringer</div>
+            <div class="ben-desc">Turkish Miles&Smiles: Von IST gibt es exzellente J-Class-Awards auf LH/Swiss. Günstigflug HAJ → IST + TK Award IST → JFK/LAX kann günstiger sein als direktes Meilenticket.</div>
+            <div class="ben-val g">IST → JFK in LH J: ~45.000 Miles&Smiles</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SUCHE ══════ -->
+<div class="page" id="page-search">
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-tag">Miles & Points</div>
+    <h1>Best Flight<br><em>Deal Finder</em></h1>
+    <p class="hero-sub">Effizienz-Score · CPM · Alle Programme · Direkt buchen</p>
+
+    <div style="margin-top:14px">
+      <div id="scoreInfoToggle" onclick="document.getElementById('scoreInfoBox').style.display=document.getElementById('scoreInfoBox').style.display==='none'?'block':'none'"
+        style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;background:#FFFFFF;border:1px solid var(--b2);border-radius:20px;padding:6px 13px">
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:.07em">Wie berechnet sich der Score?</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--gold2)">▾</span>
+      </div>
+      <div id="scoreInfoBox" style="display:none;margin-top:8px;background:#FFFFFF;border:1px solid var(--b1);border-radius:14px;padding:14px 15px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--gold2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Effizienz-Score — Berechnungslogik</div>
+        <div style="font-size:12px;color:#3A3A3A;line-height:1.8">
+          Der Score basiert auf dem <strong>Cents-per-Mile (CPM)</strong> Wert:<br><br>
+          <span style="font-family:var(--mono);background:#F5F4F0;padding:2px 7px;border-radius:6px;font-size:11px">CPM = Cashpreis (€) ÷ Meilen × 100</span><br><br>
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:center">
+            <span style="font-family:var(--mono);font-size:11px;color:var(--teal);font-weight:700">≥ 4,0 ct</span><span style="font-size:11px;color:#3A3A3A">Score 85–98 · Ausgezeichnet</span>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--teal)">3,0–3,9 ct</span><span style="font-size:11px;color:#3A3A3A">Score 68–84 · Sehr gut</span>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--gold2)">2,0–2,9 ct</span><span style="font-size:11px;color:#3A3A3A">Score 38–67 · Akzeptabel</span>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">unter 2,0 ct</span><span style="font-size:11px;color:#3A3A3A">Score 0–37 · Kaum lohnenswert</span>
+          </div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--b1);font-size:11px;color:var(--muted2)">
+            Richtwert: Gute Business-Class-Einlösungen erreichen 3–5 ct pro Meile. Cashback-Einlösungen liegen meist bei nur 0,5–1 ct.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mode Switcher -->
+  <div style="margin:0 16px 14px;display:flex;gap:0;background:#FFFFFF;border:1px solid var(--b1);border-radius:16px;padding:4px">
+    <button class="mode-btn active" id="mode-classic" onclick="switchMode('classic')" style="flex:1;padding:9px 6px;border:none;border-radius:12px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:all .2s;background:var(--gold2);color:#fff">
+      Ziel-Suche
+    </button>
+    <button class="mode-btn" id="mode-airport" onclick="switchMode('airport')" style="flex:1;padding:9px 6px;border:none;border-radius:12px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:all .2s;background:transparent;color:var(--muted2)">
+      Abflug-Check
+    </button>
+    <button class="mode-btn" id="mode-inspire" onclick="switchMode('inspire')" style="flex:1;padding:9px 6px;border:none;border-radius:12px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:all .2s;background:transparent;color:var(--muted2)">
+      Inspiration
+    </button>
+  </div>
+
+  <!-- MODE 1: Classic Search -->
+  <div id="mode-classic-panel">
+    <div class="card">
+      <div class="card-hdr">Programme</div>
+      <div class="card-body">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="prog-row">
+            <div class="ptog mm on" data-p="MM" onclick="tp(this)">M&M<span class="ps">Miles & More</span></div>
+            <div class="ptog fb on" data-p="FB" onclick="tp(this)">FB<span class="ps">Flying Blue</span></div>
+            <div class="ptog ba on" data-p="BA" onclick="tp(this)">BA<span class="ps">Avios</span></div>
+          </div>
+          <div class="prog-row">
+            <div class="ptog fb on" data-p="SAS" onclick="tp(this)" style="border-color:rgba(126,184,212,.4)">SAS<span class="ps">EuroBonus</span></div>
+            <div class="ptog fb on" data-p="SQ" onclick="tp(this)" style="border-color:rgba(126,184,212,.4)">SQ<span class="ps">KrisFlyer</span></div>
+            <div class="ptog fb on" data-p="AC" onclick="tp(this)" style="border-color:rgba(126,184,212,.4)">AC<span class="ps">Aeroplan</span></div>
+          </div>
+          <div class="prog-row">
+            <div class="ptog ba on" data-p="IB" onclick="tp(this)" style="border-color:rgba(255,107,138,.3)">IB<span class="ps">Iberia</span></div>
+            <div class="ptog ba on" data-p="VS" onclick="tp(this)" style="border-color:rgba(255,107,138,.3)">VS<span class="ps">Virgin Atl.</span></div>
+            <div class="ptog ba on" data-p="CX" onclick="tp(this)" style="border-color:rgba(255,107,138,.3)">CX<span class="ps">AsiaMiles</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">Strecke & Zeitraum</div>
+      <div class="card-body">
+        <div class="field">
+          <label>Abflughafen</label>
+          <select id="orig">
+            <option value="ALL">Alle deutschen Hubs</option>
+            <option value="FRA">Frankfurt (FRA)</option>
+            <option value="MUC">München (MUC)</option>
+            <option value="DUS">Düsseldorf (DUS)</option>
+            <option value="HAJ" selected>Hannover (HAJ)</option>
+            <option value="BER">Berlin (BER)</option>
+            <option value="HAM">Hamburg (HAM)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Zielregion</label>
+          <select id="reg">
+            <option value="ALL">Weltweit</option>
+            <option value="NA">Nordamerika</option>
+            <option value="AS">Asien / Pazifik</option>
+            <option value="SA">Südamerika</option>
+            <option value="AF">Afrika</option>
+            <option value="ME">Naher Osten</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Reisezeitraum</label>
+          <div class="row2">
+            <div><label>Von</label><input type="date" id="df"/></div>
+            <div><label>Bis</label><input type="date" id="dt"/></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Min. Effizienz-Score</label>
+          <div class="sl-row">
+            <input type="range" min="0" max="95" value="50" step="5" id="minEff" oninput="document.getElementById('effVal').textContent=this.value+'+'"/>
+            <span class="sl-val" id="effVal">50+</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" id="searchBtn" onclick="doSearch()">Deals finden →</button>
+    <div class="stats hidden" id="statsBar">
+      <div class="stat"><span class="sv gold" id="sc">0</span><span class="sl-">Deals</span></div>
+      <div class="stat"><span class="sv g" id="sb">—</span><span class="sl-">Top Score</span></div>
+      <div class="stat"><span class="sv" id="sa">—</span><span class="sl-">Ø CPM</span></div>
+    </div>
+    <div class="res-hdr hidden" id="resHdr">
+      <span id="resCnt">0 Ergebnisse</span>
+      <select class="sort-sel" id="sortSel" onchange="renderDeals()">
+        <option value="eff">Effizienz</option>
+        <option value="miles">Meilen</option>
+        <option value="cpm">CPM</option>
+        <option value="date">Datum</option>
+      </select>
+    </div>
+    <div id="dealsList"><div class="empty"><span class="icon">✈</span>Filter wählen &<br>Deals finden.</div></div>
+  </div>
+
+  <!-- MODE 2: Best Airport Check -->
+  <div id="mode-airport-panel" style="display:none">
+    <div class="card">
+      <div class="card-hdr">Ziel & Zeitraum</div>
+      <div class="card-body">
+        <div class="field">
+          <label>Zielregion / Destination</label>
+          <select id="ap-dest">
+            <option value="JFK">New York (JFK)</option>
+            <option value="LAX">Los Angeles (LAX)</option>
+            <option value="ORD">Chicago (ORD)</option>
+            <option value="NRT">Tokyo (NRT)</option>
+            <option value="SIN">Singapore (SIN)</option>
+            <option value="HKG">Hong Kong (HKG)</option>
+            <option value="BKK">Bangkok (BKK)</option>
+            <option value="GRU">São Paulo (GRU)</option>
+            <option value="DXB">Dubai (DXB)</option>
+            <option value="NBO">Nairobi (NBO)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Reisemonat</label>
+          <select id="ap-month">
+            <option value="5">Mai 2026</option>
+            <option value="6">Juni 2026</option>
+            <option value="7">Juli 2026</option>
+            <option value="8">August 2026</option>
+            <option value="9">September 2026</option>
+            <option value="10">Oktober 2026</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Meilenprogramm</label>
+          <select id="ap-prog">
+            <option value="ALL">Alle Programme</option>
+            <option value="MM">Miles & More</option>
+            <option value="FB">Flying Blue</option>
+            <option value="BA">Avios (BA/IB/QR)</option>
+            <option value="SAS">SAS EuroBonus</option>
+            <option value="SQ">Singapore KrisFlyer</option>
+            <option value="AC">Aeroplan</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="doAirportCheck()">Top Abflughäfen finden →</button>
+    <div id="airportResult"></div>
+  </div>
+
+  <!-- MODE 3: Inspiration -->
+  <div id="mode-inspire-panel" style="display:none">
+    <div class="card">
+      <div class="card-hdr">Deine Präferenzen</div>
+      <div class="card-body">
+        <div class="field">
+          <label>Reisemonat</label>
+          <select id="ins-month">
+            <option value="5">Mai 2026</option>
+            <option value="6">Juni 2026</option>
+            <option value="7">Juli 2026</option>
+            <option value="8">August 2026</option>
+            <option value="9">September 2026</option>
+            <option value="10">Oktober 2026</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Reisestil</label>
+          <select id="ins-style">
+            <option value="culture">Kultur & Städte</option>
+            <option value="nature">Natur & Abenteuer</option>
+            <option value="beach">Strand & Entspannung</option>
+            <option value="food">Food & Lifestyle</option>
+            <option value="mix">Alles — überrasch mich!</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Reisedauer</label>
+          <select id="ins-duration">
+            <option value="short">Kurztrip (4–6 Tage)</option>
+            <option value="week">Eine Woche</option>
+            <option value="long">2 Wochen</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" id="inspireBtn" onclick="doInspire()">✦ Ziele vorschlagen lassen</button>
+    <div id="inspireResult"></div>
+  </div>
+
+</div>
+
+<div class="page" id="page-amex">
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-tag">American Express Platinum</div>
+    <h1>Deine<br><em>Benefits</em></h1>
+    <p class="hero-sub">Hake ab was du bereits genutzt hast — nichts verschenken.</p>
+  </div>
+
+  <div class="amex-hero">
+    <div class="amex-tag">Amex Platinum · 2025</div>
+    <div class="amex-title">Travel Benefits</div>
+    <div class="amex-sub">Jahres-Credits, Lounges, Hotel-Status & Versicherungen</div>
+  </div>
+
+  <div class="prog-bar-wrap">
+    <div class="prog-bar-title">Jahres-Credits Fortschritt</div>
+    <div id="progressBars"></div>
+  </div>
+
+  <div style="padding:0 16px;margin-bottom:12px">
+    <div class="sec-lbl" style="padding:0 0 8px">Reise & Flug</div>
+    <div class="ben-list" id="benFlight"></div>
+    <div class="sec-lbl" style="padding:12px 0 8px">Hotels & Status</div>
+    <div class="ben-list" id="benHotel"></div>
+    <div class="sec-lbl" style="padding:12px 0 8px">Versicherungen</div>
+    <div class="ben-list" id="benIns"></div>
+  </div>
+</div>
+
+<!-- ══════ PAYBACK ══════ -->
+<div class="page" id="page-payback">
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-tag">Punkte maximieren</div>
+    <h1>Payback<br><em>Deal Feed</em></h1>
+    <p class="hero-sub">Aktuelle Multiplikatoren — maximal Punkte sammeln.</p>
+  </div>
+
+  <div id="pbBonusAlert" style="display:none;margin:0 16px 12px;border-radius:14px;padding:14px 15px"></div>
+
+  <div class="ai-banner">
+    <span style="font-size:16px">✦</span>
+    <div class="ai-banner-txt">Demo-Daten aktiv · <strong>Phase 4:</strong> Live-Feed via KI & API</div>
+    <button class="ai-refresh" onclick="refreshFeed()">↻ Refresh</button>
+  </div>
+
+  <div class="sec-lbl">Top Multiplikatoren</div>
+  <div style="padding:0 16px" id="pbFeed"></div>
+  <div class="sec-lbl" style="margin-top:6px">Reise & Hotels</div>
+  <div style="padding:0 16px" id="pbTravel"></div>
+</div>
+
+</div>
+
+<!-- ══════ KOMBI-RECHNER ══════ -->
+<div class="page" id="page-kombi" style="padding-bottom:120px">
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-tag">Beste Preis/Leistung</div>
+    <h1>Kombinations-<br><em>Rechner</em></h1>
+    <p class="hero-sub">Hinflug mit MR, Rückflug mit Meilen — das Tool findet die effizienteste Kombination aus beiden Töpfen.</p>
+  </div>
+
+  <div style="margin:0 16px 12px;background:#F0FAF7;border:1px solid rgba(10,143,122,.2);border-radius:14px;padding:13px 15px">
+    <div style="font-family:var(--mono);font-size:10px;color:var(--teal);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">◈ Strategie</div>
+    <div style="font-size:12px;color:#3A3A3A;line-height:1.7">
+      Award-Tickets sind <strong>grundsätzlich als One-Way buchbar</strong>. Du kannst Hin- und Rückflug aus verschiedenen Programmen kombinieren — jedes Ticket separat buchen, aus dem jeweils günstigsten Topf.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr">Reiseparameter</div>
+    <div class="card-body">
+      <div class="field">
+        <label>Zielregion</label>
+        <select id="k-dest">
+          <option value="NA">Nordamerika (JFK / LAX / ORD)</option>
+          <option value="AS">Asien (NRT / SIN / HKG / BKK)</option>
+          <option value="SA">Südamerika (GRU / EZE)</option>
+          <option value="ME">Naher Osten (DXB / DOH)</option>
+          <option value="AF">Afrika (NBO / JNB)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Reisezeitraum</label>
+        <div class="row2">
+          <div><label>Hinflug ca.</label><input type="date" id="k-out"/></div>
+          <div><label>Rückflug ca.</label><input type="date" id="k-ret"/></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-primary" onclick="calcKombi()">Beste Kombination berechnen →</button>
+  <div id="kombiResult"></div>
+</div>
+
+<!-- Bottom Nav -->
+<nav class="bnav">
+  <button class="ni active" id="nav-wallet" onclick="showPage('wallet')"><span class="ni-icon">◈</span><span class="ni-lbl">Wallet</span></button>
+  <button class="ni" id="nav-kombi" onclick="showPage('kombi')"><span class="ni-icon">⇄</span><span class="ni-lbl">Kombi</span></button>
+  <button class="ni" id="nav-search" onclick="showPage('search')"><span class="ni-icon">✦</span><span class="ni-lbl">Suche</span></button>
+  <button class="ni" id="nav-amex" onclick="showPage('amex')"><span class="ni-icon">◇</span><span class="ni-lbl">Amex</span></button>
+  <button class="ni" id="nav-payback" onclick="showPage('payback')"><span class="ni-icon">●</span><span class="ni-lbl">Payback</span></button>
+</nav>
+
+<script>
+const FLIGHTS=[
+  {id:1,prog:'MM',orig:'FRA',dest:'JFK',date:'2025-07-15',miles:54000,cashEur:1850,seats:4,airline:'Lufthansa',travel:'9h',region:'NA'},
+  {id:2,prog:'FB',orig:'CDG',dest:'NRT',date:'2025-08-02',miles:62000,cashEur:2400,seats:2,airline:'Air France',travel:'12h',region:'AS'},
+  {id:3,prog:'BA',orig:'LHR',dest:'SIN',date:'2025-07-28',miles:67500,cashEur:2100,seats:3,airline:'British Airways',travel:'13h',region:'AS'},
+  {id:4,prog:'MM',orig:'MUC',dest:'LAX',date:'2025-09-10',miles:58000,cashEur:2200,seats:2,airline:'Lufthansa',travel:'11h',region:'NA'},
+  {id:5,prog:'FB',orig:'AMS',dest:'GRU',date:'2025-08-20',miles:72000,cashEur:2800,seats:4,airline:'KLM',travel:'11h',region:'SA'},
+  {id:6,prog:'BA',orig:'MAD',dest:'EZE',date:'2025-07-05',miles:68000,cashEur:2600,seats:1,airline:'Iberia',travel:'13h',region:'SA'},
+  {id:7,prog:'MM',orig:'FRA',dest:'HND',date:'2025-10-01',miles:60000,cashEur:2500,seats:3,airline:'ANA',travel:'12h',region:'AS'},
+  {id:8,prog:'FB',orig:'CDG',dest:'JFK',date:'2025-07-18',miles:50000,cashEur:1900,seats:5,airline:'Air France',travel:'8h',region:'NA'},
+  {id:9,prog:'BA',orig:'LHR',dest:'NBO',date:'2025-08-14',miles:40000,cashEur:1400,seats:2,airline:'British Airways',travel:'9h',region:'AF'},
+  {id:10,prog:'MM',orig:'HAJ',dest:'DXB',date:'2025-07-22',miles:46000,cashEur:1600,seats:2,airline:'Lufthansa',travel:'6h',region:'ME'},
+  {id:11,prog:'FB',orig:'CDG',dest:'ICN',date:'2025-09-03',miles:65000,cashEur:2300,seats:3,airline:'Korean Air',travel:'11h',region:'AS'},
+  {id:12,prog:'BA',orig:'LHR',dest:'HKG',date:'2025-08-30',miles:72000,cashEur:2900,seats:2,airline:'Cathay Pacific',travel:'12h',region:'AS'},
+  {id:13,prog:'MM',orig:'FRA',dest:'ORD',date:'2025-07-10',miles:52000,cashEur:1750,seats:6,airline:'United',travel:'9h',region:'NA'},
+  {id:14,prog:'FB',orig:'AMS',dest:'BKK',date:'2025-10-15',miles:58000,cashEur:1950,seats:4,airline:'KLM',travel:'11h',region:'AS'},
+  {id:15,prog:'MM',orig:'MUC',dest:'GRU',date:'2025-08-08',miles:76000,cashEur:2700,seats:1,airline:'Lufthansa',travel:'12h',region:'SA'},
+  {id:16,prog:'BA',orig:'LHR',dest:'LAX',date:'2025-09-25',miles:55000,cashEur:2050,seats:3,airline:'British Airways',travel:'11h',region:'NA'},
+  {id:17,prog:'FB',orig:'CDG',dest:'NBO',date:'2025-07-30',miles:44000,cashEur:1550,seats:2,airline:'Air France',travel:'9h',region:'AF'},
+  {id:18,prog:'MM',orig:'FRA',dest:'SIN',date:'2025-08-12',miles:62000,cashEur:2350,seats:4,airline:'Singapore Air',travel:'13h',region:'AS'},
+];
+// ─────────────────────────────────────────────────────────
+// AMEX MR DEUTSCHLAND – Transferpartner (Stand 2026)
+// Quelle: americanexpress.com/de-de + meilenoptimieren.com
+// ─────────────────────────────────────────────────────────
+const TRANSFERS = [
+  // ── Direktpartner 5:4 (beste DE-Ratio) ──────────────────
+  { prog:'BA',  name:'British Airways Avios', ico:'◇', rate:0.8,
+    note:'5:4 · Avios weiter zu QR/IB/FI/AY 1:1 möglich', alliance:'Oneworld',
+    sweet:'Qatar Qsuite via BA Avios — günstiger als direkt' },
+  { prog:'FB',  name:'Flying Blue (AF/KLM)',  ico:'◈', rate:0.8,
+    note:'5:4 · Promo Awards bis -50% · SkyTeam', alliance:'SkyTeam',
+    sweet:'Promo Awards: FRA→JFK ab ~40K, FRA→NRT ab ~50K' },
+  { prog:'IB',  name:'Iberia Plus Avios',     ico:'●', rate:0.8,
+    note:'5:4 · Europa→USA ab 34K Avios One-Way', alliance:'Oneworld',
+    sweet:'MAD→JFK/MIA Business ab 34.000 Avios (Off-Peak)' },
+  { prog:'SAS', name:'SAS EuroBonus',         ico:'◆', rate:0.8,
+    note:'5:4 · J-Class USA ab 60K · keine Fuel Surcharges!', alliance:'Star Alliance',
+    sweet:'CPH→JFK Business 60K Meilen, max. 200€ Zuschlag' },
+  { prog:'EK',  name:'Emirates Skywards',     ico:'◇', rate:0.8,
+    note:'5:4 · hohe Zuzahlungen · kaum sweet spots', alliance:'Keine',
+    sweet:'Nur für Dubai/DXB sinnvoll bei guten Tarifen' },
+  { prog:'EY',  name:'Etihad Guest',          ico:'●', rate:0.8,
+    note:'5:4 · ⚠ Partnerschaft endet 30.06.2026!', alliance:'Keine',
+    sweet:'Bald nicht mehr verfügbar — jetzt transferieren wenn nötig' },
+  { prog:'FI',  name:'Finnair Plus (Avios)',  ico:'◆', rate:0.8,
+    note:'5:4 · Avios-Währung · zu BA/IB/QR transferierbar', alliance:'Oneworld',
+    sweet:'Flexibler Avios-Pool mit BA/IB/QR kombinierbar' },
+  // ── Direktpartner 3:2 ────────────────────────────────────
+  { prog:'CX',  name:'Cathay AsiaMiles',      ico:'◈', rate:0.67,
+    note:'3:2 · Oneworld · Asien-Strecken sehr gut', alliance:'Oneworld',
+    sweet:'HKG→SYD/NRT Business attraktiv' },
+  { prog:'SQ',  name:'Singapore KrisFlyer',   ico:'◇', rate:0.67,
+    note:'3:2 · Star Alliance · Spontaneous Escapes!', alliance:'Star Alliance',
+    sweet:'Spontaneous Escapes: FRA→JFK Business oft ~50K' },
+  { prog:'DL',  name:'Delta SkyMiles',        ico:'●', rate:0.67,
+    note:'3:2 · SkyTeam · Flash Sales nutzen', alliance:'SkyTeam',
+    sweet:'Flash Sales: USA-Inlandsflüge sehr günstig' },
+  { prog:'QR',  name:'Qatar Privilege Club',  ico:'◆', rate:0.67,
+    note:'3:2 direkt · besser: via BA Avios (5:4 + 1:1)', alliance:'Oneworld',
+    sweet:'Qsuite Business: FRA→DOH ca. 43K Avios (Off-Peak)' },
+  // ── Hotels ──────────────────────────────────────────────
+  { prog:'HH',  name:'Hilton Honors',         ico:'◈', rate:2.0,
+    note:'1:2 · 1.000 MR = 2.000 HH · meist schlechter Wert', alliance:'Hotel',
+    sweet:'Nur bei Bonus-Aktionen oder 5th night free sinnvoll' },
+  { prog:'MBV', name:'Marriott Bonvoy',       ico:'◇', rate:1.5,
+    note:'2:3 · +5K Bonus ab 60K Transfer', alliance:'Hotel',
+    sweet:'60K MR → 90K + 5K Bonus = 95K Bonvoy Punkte' },
+  { prog:'RAD', name:'Radisson Rewards',      ico:'●', rate:2.0,
+    note:'1:2 · kaum sinnvolle Einlösungen', alliance:'Hotel',
+    sweet:'Selten attraktiv — nur für spez. Radisson-Hotels' },
+];
+
+// ── Qatar-Strategie: via BA ist besser als direkt ──────────
+// MR→BA: 5:4 (0.8), dann BA→QR: 1:1 → effektiv 0.8 statt 0.67
+// Sparnis: 1.000 MR → 800 QR-Avios statt 670 QR-Avios direkt
+
+
+const AFFORD_OPTIONS=[
+  {title:'Business FRA → JFK',miles:54000,prog:'MM',ico:'🗽'},
+  {title:'Business FRA → JFK × 2',miles:108000,prog:'MM',ico:'👫'},
+  {title:'Business FRA → NRT',miles:60000,prog:'MM',ico:'🗼'},
+  {title:'Business → Asien (FB)',miles:62000,prog:'FB',ico:'🌏'},
+  {title:'Business → Südamerika',miles:72000,prog:'FB',ico:'🌿'},
+  {title:'Business → Dubai',miles:46000,prog:'MM',ico:'🏙'},
+];
+const BOOKING={MM:'https://www.miles-and-more.com/de/de/program/flight-award.html',FB:'https://wwws.airfrance.de',BA:'https://www.britishairways.com/en-gb/executive-club/spending-avios/reward-flights',SAS:'https://www.flysas.com/en/us/sas-eurobonus/use-points/',SQ:'https://www.singaporeair.com/en_UK/us/ppsclub-krisflyer/use-miles/',AC:'https://www.aircanada.com/us/en/aco/home/aeroplan.html',IB:'https://www.iberia.com/us/iberia-plus/',VS:'https://www.virginatlantic.com/us/en/flying-club/use-miles.html',CX:'https://www.cathaypacific.com/cx/en_US/asia-miles/use-miles.html'};
+const PNAME={MM:'Miles & More',FB:'Flying Blue',BA:'Avios',SAS:'SAS EuroBonus',SQ:'Singapore KrisFlyer',AC:'Aeroplan',IB:'Iberia Plus',VS:'Virgin Atlantic',CX:'Cathay AsiaMiles'};
+const RDEST={NA:['JFK','LAX','ORD','SFO','YYZ','BOS','MIA'],AS:['NRT','HND','ICN','SIN','HKG','BKK','PVG','DEL'],SA:['GRU','EZE','BOG','SCL','LIM'],AF:['JNB','NBO','CAI','ADD','LOS'],ME:['DXB','DOH','AUH','AMM']};
+const BENEFITS_FLIGHT=[
+  {id:'tc',ico:'◈',title:'Travel Credit',desc:'Bis zu 200 € pro Jahr für Reisebuchungen via amex.de/travel — Flüge, Hotels, Mietwagen.',val:'200 € / Jahr',vc:'g'},
+  {id:'pp',ico:'◇',title:'Priority Pass Lounge',desc:'Unbegrenzter Zugang zu 1.400+ Lounges weltweit — du + 1 Begleitperson kostenlos. Aktivierung via Amex App.',val:'Unbegrenzt',vc:'g'},
+  {id:'glob',ico:'✦',title:'Global Lounge Collection',desc:'Centurion Lounges, Delta Sky Clubs, Escape Lounges — am FRA & MUC verfügbar.',val:'Kostenlos',vc:'g'},
+  {id:'amextravel',ico:'●',title:'Amex Travel Buchung',desc:'Flüge über Amex Travel buchen = 5× MR statt 1×. Bei 2.000 € Flug = 10.000 extra MR.',val:'5× Punkte',vc:'gold'},
+  {id:'sixt',ico:'◆',title:'Sixt Platinum Status',desc:'Kostenloser Platinum Status — Upgrades, Priority Counter, kostenlose Zusatzfahrer.',val:'Platinum Status',vc:'gold'},
+];
+const BENEFITS_HOTEL=[
+  {id:'fhr',ico:'◈',title:'Fine Hotels & Resorts',desc:'500+ Luxushotels — garantiertes Upgrade, 4 PM Late Checkout, 100 $ Hotel-Credit, Frühstück für 2.',val:'~550 $ Wert / Nacht',vc:'g'},
+  {id:'mrg',ico:'◇',title:'Marriott Gold Status',desc:'Automatisch via Amex — 25% Bonuspunkte, Zimmer-Upgrades, Late Checkout.',val:'Gold Status',vc:'gold'},
+  {id:'hilton',ico:'◆',title:'Hilton Gold Status',desc:'Automatisch via Amex — Frühstück in vielen Hotels, Zimmer-Upgrade, Bonuspunkte.',val:'Gold Status',vc:'gold'},
+];
+const BENEFITS_INS=[
+  {id:'reise',ico:'●',title:'Reiserücktrittsversicherung',desc:'Bis zu 10.000 € Deckung bei Stornierung — gilt wenn Reise mit Amex bezahlt wurde.',val:'10.000 € Deckung',vc:'g'},
+  {id:'ausland',ico:'◈',title:'Auslandskrankenversicherung',desc:'Notfallversorgung im Ausland — Karte vor Abreise über die Amex App aktivieren.',val:'Notfalldeckung',vc:'g'},
+  {id:'mietwagen',ico:'◇',title:'Mietwagen-Vollkasko',desc:'Keine CDW nötig wenn mit Amex Platin bezahlt — spart 15–30 € / Tag.',val:'~30 € / Tag',vc:'gold'},
+  {id:'gepaeck',ico:'◆',title:'Gepäckversicherung',desc:'Verlust, Diebstahl, Beschädigung — automatisch aktiv bei Amex-Buchung.',val:'Automatisch',vc:'g'},
+];
+const PB_DEALS=[
+  {name:'REWE',multi:'10×',desc:'10-fach Punkte auf Lebensmittel',exp:'30. Apr 2025',cat:'Supermarkt'},
+  {name:'dm',multi:'5×',desc:'5-fach auf Drogerieartikel',exp:'15. Mai 2025',cat:'Drogerie'},
+  {name:'Aral',multi:'4×',desc:'4-fach auf Tankfüllungen',exp:'30. Apr 2025',cat:'Tanken'},
+  {name:'Amazon',multi:'3×',desc:'3-fach auf alle Bestellungen',exp:'31. Mai 2025',cat:'Shopping'},
+  {name:'Zalando',multi:'6×',desc:'6-fach auf Mode & Schuhe',exp:'05. Mai 2025',cat:'Shopping'},
+  {name:'Tchibo',multi:'8×',desc:'8-fach auf Kaffee & Aktionsware',exp:'20. Apr 2025',cat:'Shopping'},
+];
+const PB_TRAVEL=[
+  {name:'Booking.com',multi:'5×',desc:'5-fach auf Hotelbuchungen',exp:'31. Mai 2025',cat:'Hotel'},
+  {name:'Lufthansa',multi:'4×',desc:'4-fach auf LH Direktbuchungen',exp:'30. Apr 2025',cat:'Flug'},
+  {name:'Hertz',multi:'6×',desc:'6-fach auf Mietwagen weltweit',exp:'15. Mai 2025',cat:'Mietwagen'},
+  {name:'HRS',multi:'5×',desc:'5-fach auf Hotelbuchungen',exp:'31. Mai 2025',cat:'Hotel'},
+];
+
+let activeProgs=new Set(['MM','FB','BA','SAS','SQ','AC','IB','VS','CX']), results=[], benefitState={}, selTr='MM';
+const bs=localStorage.getItem('mh_ben'); if(bs) benefitState=JSON.parse(bs);
+
+function showPage(n){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
+  document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+n).classList.add('show');
+  document.getElementById('nav-'+n).classList.add('active');
+}
+
+function updateWallet(){
+  const mm=+document.getElementById('mm-bal').value||0;
+  const amex=+document.getElementById('amex-bal').value||0;
+  const pb=+document.getElementById('pb-bal').value||0;
+  const fb=+document.getElementById('fb-bal').value||0;
+  const pbMM=pb, total=mm+amex+pbMM+fb;
+  document.getElementById('totalEur').textContent=(total*0.03).toLocaleString('de-DE',{maximumFractionDigits:0})+' €';
+  document.getElementById('totalMiles').textContent=total.toLocaleString('de-DE')+' Meilen-Äquivalent';
+  const mmTot=mm+pbMM+amex;
+  document.getElementById('affordGrid').innerHTML=AFFORD_OPTIONS.map(o=>{
+    const has=o.prog==='MM'?mmTot>=o.miles:fb>=o.miles;
+    const withAmex=o.prog==='MM'?mmTot>=o.miles:(fb+amex)>=o.miles;
+    const cls=has?'yes':withAmex?'partial':'';
+    const badge=has?`<span class="acard-badge ab-yes">Möglich</span>`:withAmex?`<span class="acard-badge ab-partial">Mit Transfer</span>`:`<span class="acard-badge ab-no">${o.miles.toLocaleString('de-DE')} nötig</span>`;
+    return `<div class="acard ${cls}"><div class="acard-ico">${o.ico}</div><div class="acard-info"><div class="acard-title">${o.title}</div><div class="acard-desc">${o.miles.toLocaleString('de-DE')} Meilen · ${PNAME[o.prog]}</div></div>${badge}</div>`;
+  }).join('');
+  renderTransfers();calcTransfer();calcPb();
+}
+
+function renderTransfers(){
+  const amex=+document.getElementById('amex-bal').value||0;
+  // Group by alliance
+  const groups = ['Star Alliance','SkyTeam','Oneworld','Partnerallianz','Hotel','Umweg'];
+  let html = '';
+  for(const g of groups){
+    const members = TRANSFERS.filter(t=>t.alliance===g);
+    if(!members.length) continue;
+    const gLabel = g==='Umweg'?'⚡ Umweg-Strategie':g==='Hotel'?'🏨 Hotels':g;
+    html += `<div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;padding:8px 0 5px">${gLabel}</div>`;
+    html += members.map(t=>{
+      const cv=Math.floor(amex*t.rate);
+      const isDevalued = t.note.includes('abgewertet');
+      const isGood = t.rate >= 0.8;
+      const ratioLabel = t.rate===1?'1:1':t.rate>1?`1:${t.rate}`:`${Math.round(10/t.rate*10)/10}→10`;
+      const rateStr = t.rate===0.8?'5:4':t.rate===0.67?'3:2':t.rate===0.5?'2:1':t.rate===0.27?'3:1+bonus':t.rate===1.6?'1:1.6':'';
+      return `<div class="tr-item ${selTr===t.prog?'sel':''}" onclick="selTr='${t.prog}';calcTransfer();renderTransfers()">
+        <span class="tr-ico" style="font-size:13px">${t.ico}</span>
+        <div class="tr-info">
+          <div class="tr-name" style="display:flex;align-items:center;gap:6px">
+            ${t.name}
+            ${isDevalued?'<span style="font-size:9px;font-family:var(--mono);background:rgba(232,101,10,.12);color:var(--gold2);padding:2px 5px;border-radius:4px">⚠ abgew.</span>':''}
+          </div>
+          <div class="tr-rate">${t.note}</div>
+        </div>
+        <div class="tr-val" style="color:${isGood&&!isDevalued?'var(--teal)':'var(--muted2)'}">
+          ${cv.toLocaleString('de-DE')}
+          <span>${rateStr}</span>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('trList').innerHTML=html;
+}
+
+function calcTransfer(){
+  const amex=+document.getElementById('amex-bal').value||0;
+  const needed=+document.getElementById('neededMiles').value||60000;
+  const t=TRANSFERS.find(x=>x.prog===selTr); if(!t) return;
+  const cv=Math.floor(amex*t.rate), ok=cv>=needed;
+  document.getElementById('trResult').innerHTML=ok
+    ?`<div class="result-box ok"><span class="result-box-ico">✓</span><div class="result-box-txt"><strong>Transfer reicht aus</strong>${cv.toLocaleString('de-DE')} ${t.name}-Meilen · Überschuss: ${(cv-needed).toLocaleString('de-DE')}</div></div>`
+    :`<div class="result-box warn"><span class="result-box-ico">↗</span><div class="result-box-txt"><strong>${(needed-cv).toLocaleString('de-DE')} Meilen fehlen</strong>${cv.toLocaleString('de-DE')} von ${needed.toLocaleString('de-DE')} ${t.name}-Meilen</div></div>`;
+}
+
+function calcPb(){
+  const pts=+document.getElementById('pb-conv').value||0;
+  const miles=pts, eur=(pts*0.01).toFixed(2), bonus=Math.floor(miles*1.25);
+  document.getElementById('pbResult').innerHTML=`${pts.toLocaleString('de-DE')} Punkte<br><span class="big">${miles.toLocaleString('de-DE')} Meilen</span>oder ${eur} € Cashback<br><span style="color:var(--gold2);font-size:11px">✦ Mit 25%-Bonus-Aktion: ${bonus.toLocaleString('de-DE')} Meilen</span>`;
+}
+
+function tp(el){
+  const p=el.dataset.p;
+  if(activeProgs.has(p)&&activeProgs.size>1){activeProgs.delete(p);el.classList.remove('on');}
+  else{activeProgs.add(p);el.classList.add('on');}
+}
+function cpm(d){return d.cashEur/d.miles*100}
+function eff(d){const c=cpm(d);if(c>=4)return Math.min(98,Math.round(85+(c-4)*5));if(c>=3)return Math.round(68+(c-3)*17);if(c>=2)return Math.round(38+(c-2)*30);return Math.round(c*19)}
+
+function doSearch(){
+  const btn=document.getElementById('searchBtn');
+  btn.disabled=true;btn.textContent='Suche läuft…';
+  document.getElementById('dealsList').innerHTML='<div class="loader-wrap"><div class="loader"><span></span><span></span><span></span></div><div class="load-txt">Scanning availability…</div></div>';
+  document.getElementById('statsBar').classList.add('hidden');
+  document.getElementById('resHdr').classList.add('hidden');
+  setTimeout(()=>{
+    const orig=document.getElementById('orig').value, reg=document.getElementById('reg').value;
+    const df=document.getElementById('df').value, dt=document.getElementById('dt').value;
+    const minE=+document.getElementById('minEff').value;
+    results=FLIGHTS.filter(d=>{
+      if(!activeProgs.has(d.prog)) return false;
+      if(reg!=='ALL'&&RDEST[reg]&&!RDEST[reg].includes(d.dest)) return false;
+      if(df&&d.date<df) return false;
+      if(dt&&d.date>dt) return false;
+      if(eff(d)<minE) return false;
+      return true;
+    });
+    renderDeals();
+    if(results.length){
+      document.getElementById('statsBar').classList.remove('hidden');
+      document.getElementById('sc').textContent=results.length;
+      document.getElementById('sb').textContent=Math.max(...results.map(eff));
+      document.getElementById('sa').textContent=(results.reduce((a,b)=>a+cpm(b),0)/results.length).toFixed(2)+'€';
+    }
+    btn.disabled=false;btn.innerHTML='Deals finden &nbsp;→';
+  },800);
+}
+
+function renderDeals(){
+  const sort=document.getElementById('sortSel').value;
+  let s=[...results];
+  if(sort==='eff') s.sort((a,b)=>eff(b)-eff(a));
+  if(sort==='miles') s.sort((a,b)=>a.miles-b.miles);
+  if(sort==='cpm') s.sort((a,b)=>cpm(b)-cpm(a));
+  if(sort==='date') s.sort((a,b)=>a.date.localeCompare(b.date));
+  const hdr=document.getElementById('resHdr');
+  if(!s.length){document.getElementById('dealsList').innerHTML='<div class="empty"><span class="big">∅</span>Keine Deals gefunden.</div>';hdr.classList.add('hidden');return;}
+  hdr.classList.remove('hidden');document.getElementById('resCnt').textContent=s.length+' Ergebnisse';
+  const mm=+document.getElementById('mm-bal').value||0;
+  const amex=+document.getElementById('amex-bal').value||0;
+  const pb=+document.getElementById('pb-bal').value||0;
+  const mmTot=mm+Math.floor(pb/2)+amex;
+  document.getElementById('dealsList').innerHTML=s.map((d,i)=>{
+    const e=eff(d), cv=cpm(d), isTop=e>=75;
+    const ec=e>=75?'h':e>=50?'m':'l';
+    const tc=d.prog==='MM'?'ptag-mm':['FB','SAS','SQ','AC','DL','VS'].includes(d.prog)?'ptag-fb':'ptag-ba';
+    const ds=new Date(d.date).toLocaleDateString('de-DE',{day:'2-digit',month:'short',year:'numeric'});
+    const can=mmTot>=d.miles;
+    const afford=can
+      ?`<div class="afford"><div class="afford-dot yes"></div><div class="afford-txt"><strong>Du kannst dir das leisten</strong>${mmTot.toLocaleString('de-DE')} verfügbar · ${d.miles.toLocaleString('de-DE')} nötig</div></div>`
+      :`<div class="afford"><div class="afford-dot no"></div><div class="afford-txt"><strong>${(d.miles-mmTot).toLocaleString('de-DE')} Meilen fehlen noch</strong>Via Amex Transfer oder mehr Payback sammeln</div></div>`;
+    return `<div class="deal ${isTop?'top':''}" style="animation-delay:${i*0.05}s">
+      <div class="deal-head">
+        <div class="deal-tags"><span class="ptag ${tc}">${PNAME[d.prog]}</span>${isTop?'<span class="ptag ptag-top">Top Deal</span>':''}</div>
+        <div class="deal-m"><div class="deal-miles">${d.miles.toLocaleString('de-DE')}</div><span class="deal-mlbl">Meilen J</span></div>
+      </div>
+      <div class="deal-route">
+        <span class="ap">${d.orig}</span>
+        <div class="rmid"><div class="rline-w"><div class="rline"></div><span class="rplane">✈</span><div class="rline"></div></div><span class="ral">${d.airline}</span></div>
+        <span class="ap">${d.dest}</span>
+      </div>
+      <div class="chips">
+        <span class="chip">${ds}</span><span class="chip">${d.travel}</span>
+        <span class="chip">${d.seats} Sitz${d.seats!==1?'e':''}</span>
+        <span class="chip g">${cv.toFixed(2)} € CPM</span>
+      </div>
+      ${afford}
+      <div class="eff-w">
+        <div class="eff-top"><span class="eff-lbl">Effizienz-Score</span><span class="eff-sc ${ec}">${e} / 100</span></div>
+        <div class="eff-bar"><div class="eff-fill ${ec}" style="width:${e}%"></div></div>
+      </div>
+      <div class="cpm-row">
+        <div class="cpm-c"><span class="cpm-v">${cv.toFixed(2)} €</span><span class="cpm-l">pro Meile</span></div>
+        <div class="cpm-c"><span class="cpm-v">${d.cashEur.toLocaleString('de-DE')} €</span><span class="cpm-l">Cashpreis</span></div>
+        <div class="cpm-c"><span class="cpm-v">${d.seats}</span><span class="cpm-l">Sitze frei</span></div>
+      </div>
+      <button class="book-btn" onclick="window.open('${BOOKING[d.prog]}','_blank')">Bei ${PNAME[d.prog]} buchen &nbsp;→</button>
+    </div>`;
+  }).join('');
+}
+
+function renderBenefits(){
+  renderBenList('benFlight',BENEFITS_FLIGHT);
+  renderBenList('benHotel',BENEFITS_HOTEL);
+  renderBenList('benIns',BENEFITS_INS);
+  renderProgress();
+}
+function renderBenList(id,list){
+  document.getElementById(id).innerHTML=list.map(b=>{
+    const used=!!benefitState[b.id];
+    return `<div class="ben ${used?'used':'unused'}">
+      <span class="ben-ico" style="font-size:16px">${b.ico}</span>
+      <div class="ben-body">
+        <div class="ben-title">${b.title}</div>
+        <div class="ben-desc">${b.desc}</div>
+        <div class="ben-val ${b.vc}">${b.val}</div>
+        <div class="ben-tog" onclick="toggleBen('${b.id}')">
+          <div class="tog-box ${used?'on':''}">${used?'✓':''}</div>
+          <span>${used?'Genutzt':'Als genutzt markieren'}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleBen(id){benefitState[id]=!benefitState[id];localStorage.setItem('mh_ben',JSON.stringify(benefitState));renderBenefits()}
+function renderProgress(){
+  const items=[{name:'Travel Credit',total:200,id:'tc'},{name:'Dining Credit',total:120,id:'dining'},{name:'Streaming Credit',total:60,id:'stream'}];
+  document.getElementById('progressBars').innerHTML=items.map(c=>{
+    const used=benefitState[c.id+'_used']||0, pct=Math.min(100,Math.round(used/c.total*100));
+    return `<div class="pb-row"><div class="pb-rhead"><span class="pb-rname">${c.name}</span><span class="pb-rpct">${pct}% · ${used} € / ${c.total} €</span></div><div class="pb-bg"><div class="pb-fill" style="width:${pct}%"></div></div></div>`;
+  }).join('');
+}
+
+function renderFeed(){
+  document.getElementById('pbFeed').innerHTML=PB_DEALS.map(d=>`
+    <div class="pb-deal">
+      <div class="pb-multi">${d.multi}<small>Punkte</small></div>
+      <div class="pb-info"><div class="pb-name">${d.name}</div><div class="pb-desc">${d.desc}</div><div class="pb-exp">bis ${d.exp}</div></div>
+      <span class="pb-cat">${d.cat}</span>
+    </div>`).join('');
+  document.getElementById('pbTravel').innerHTML=PB_TRAVEL.map(d=>`
+    <div class="pb-deal">
+      <div class="pb-multi">${d.multi}<small>Punkte</small></div>
+      <div class="pb-info"><div class="pb-name">${d.name}</div><div class="pb-desc">${d.desc}</div><div class="pb-exp">bis ${d.exp}</div></div>
+      <span class="pb-cat">${d.cat}</span>
+    </div>`).join('');
+}
+function refreshFeed(){
+  document.getElementById('pbFeed').innerHTML='<div class="loader-wrap"><div class="loader"><span></span><span></span><span></span></div><div class="load-txt">Lädt…</div></div>';
+  setTimeout(renderFeed,900);
+}
+
+// ── KOMBINATIONS-RECHNER ────────────────────────────────
+const KOMBI_DATA = {
+  NA: {
+    label: 'Nordamerika',
+    dest: 'JFK / LAX / ORD',
+    options: [
+      { prog:'MM',  src:'Meilen',  miles:54000, cashEur:1850, note:'LH Business FRA→JFK', type:'mm' },
+      { prog:'FB',  src:'MR',      miles:62500, cashEur:1900, note:'Flying Blue FRA→JFK (62.500 MR = 50.000 Meilen)', type:'mr', mrNeeded:62500, milesOut:50000 },
+      { prog:'BA',  src:'MR',      miles:75000, cashEur:1900, note:'Avios via BA → JFK (75K MR = 60K Avios)', type:'mr', mrNeeded:75000, milesOut:60000 },
+      { prog:'SAS', src:'MR',      miles:75000, cashEur:1850, note:'SAS EuroBonus Business (75K MR = 60K · keine Fuel Surcharge!)', type:'mr', mrNeeded:75000, milesOut:60000 },
+      { prog:'AC',  src:'MR',      miles:75000, cashEur:1850, note:'Aeroplan Business (75K MR → 60K · kein Fuel Surcharge)', type:'mr', mrNeeded:75000, milesOut:60000 },
+    ]
+  },
+  AS: {
+    label: 'Asien / Pazifik',
+    dest: 'NRT / SIN / HKG / BKK',
+    options: [
+      { prog:'MM',  src:'Meilen',  miles:60000, cashEur:2400, note:'LH Business FRA→NRT', type:'mm' },
+      { prog:'FB',  src:'MR',      miles:77500, cashEur:2400, note:'Flying Blue FRA→NRT (77.500 MR = 62K)', type:'mr', mrNeeded:77500, milesOut:62000 },
+      { prog:'SQ',  src:'MR',      miles:90000, cashEur:2500, note:'Singapore Business · Spontaneous Escape (90K MR = 60K)', type:'mr', mrNeeded:90000, milesOut:60000 },
+      { prog:'BA',  src:'MR',      miles:100000,cashEur:2100, note:'Avios → SIN via BA (100K MR = 80K Avios)', type:'mr', mrNeeded:100000, milesOut:80000 },
+    ]
+  },
+  SA: {
+    label: 'Südamerika',
+    dest: 'GRU / EZE',
+    options: [
+      { prog:'MM',  src:'Meilen',  miles:72000, cashEur:2700, note:'LH Business FRA→GRU', type:'mm' },
+      { prog:'FB',  src:'MR',      miles:90000, cashEur:2800, note:'Flying Blue FRA→GRU (90K MR = 72K)', type:'mr', mrNeeded:90000, milesOut:72000 },
+      { prog:'IB',  src:'MR',      miles:62500, cashEur:2600, note:'Iberia MAD→GRU Business (62.5K MR = 50K Avios)', type:'mr', mrNeeded:62500, milesOut:50000 },
+    ]
+  },
+  ME: {
+    label: 'Naher Osten',
+    dest: 'DXB / DOH',
+    options: [
+      { prog:'MM',  src:'Meilen',  miles:46000, cashEur:1600, note:'LH Business FRA→DXB', type:'mm' },
+      { prog:'BA',  src:'MR',      miles:53750, cashEur:1500, note:'Qatar Qsuite DOH via BA Avios (53.750 MR = 43K Avios)', type:'mr', mrNeeded:53750, milesOut:43000 },
+      { prog:'EK',  src:'MR',      miles:62500, cashEur:1600, note:'Emirates Business FRA→DXB (62.5K MR = 50K)', type:'mr', mrNeeded:62500, milesOut:50000 },
+    ]
+  },
+  AF: {
+    label: 'Afrika',
+    dest: 'NBO / JNB',
+    options: [
+      { prog:'MM',  src:'Meilen',  miles:44000, cashEur:1500, note:'LH Business FRA→NBO', type:'mm' },
+      { prog:'FB',  src:'MR',      miles:55000, cashEur:1550, note:'Flying Blue FRA→NBO (55K MR = 44K)', type:'mr', mrNeeded:55000, milesOut:44000 },
+      { prog:'BA',  src:'MR',      miles:62500, cashEur:1400, note:'BA Business LHR→NBO (62.5K MR = 50K Avios)', type:'mr', mrNeeded:62500, milesOut:50000 },
+    ]
+  }
+};
+
+const PROG_LABEL = {MM:'Miles & More',FB:'Flying Blue',BA:'Avios (BA)',SAS:'SAS EuroBonus',AC:'Aeroplan',SQ:'Singapore KrisFlyer',IB:'Iberia Plus',EK:'Emirates',QR:'Qatar Avios',CX:'Cathay AsiaMiles'};
+
+function cpmKombi(opt) { return opt.cashEur / (opt.type==='mr'? opt.mrNeeded : opt.miles) * 100; }
+function effKombi(opt) {
+  const c = cpmKombi(opt);
+  if(c>=4) return Math.min(98,Math.round(85+(c-4)*5));
+  if(c>=3) return Math.round(68+(c-3)*17);
+  if(c>=2) return Math.round(38+(c-2)*30);
+  return Math.round(c*19);
+}
+
+function calcKombi() {
+  const dest   = document.getElementById('k-dest').value;
+  const mm     = +document.getElementById('mm-bal').value  || 0;
+  const amex   = +document.getElementById('amex-bal').value|| 0;
+  const pb     = +document.getElementById('pb-bal').value  || 0;
+  const mmTot  = mm + pb; // Payback 1:1 zu M&M
+  const data   = KOMBI_DATA[dest];
+  if (!data) return;
+
+  const mmOpts = data.options.filter(o => o.type === 'mm').sort((a,b) => effKombi(b)-effKombi(a));
+  const mrOpts = data.options.filter(o => o.type === 'mr').sort((a,b) => effKombi(b)-effKombi(a));
+  const bestMM = mmOpts[0];
+  const bestMR = mrOpts[0];
+
+  const canMM   = bestMM && mmTot  >= bestMM.miles;
+  const canMR   = bestMR && amex   >= bestMR.mrNeeded;
+  const canBoth = canMM && canMR;
+
+  // ── Kombinations-Sinnhaftigkeits-Check ──────────────────
+  // Kombination lohnt sich nur wenn:
+  // 1. Beide Töpfe haben gute Optionen (eff >= 50)
+  // 2. Es gibt KEINE einzelne Option die aus einem Topf beide Richtungen besser abdeckt
+  // 3. Der Effizienz-Unterschied ist >15 Punkte (sonst lieber einfach halten)
+  const effMM = bestMM ? effKombi(bestMM) : 0;
+  const effMR = bestMR ? effKombi(bestMR) : 0;
+  const effDiff = Math.abs(effMM - effMR);
+  const bothGood = effMM >= 50 && effMR >= 50;
+  const kombiSinnvoll = canBoth && bothGood && effDiff <= 25;
+  // If one option is vastly better (>25pt diff), just use that one for both directions
+  const clearWinner = effDiff > 25 ? (effMM > effMR ? 'mm' : 'mr') : null;
+
+  let html = '';
+
+  // ── Empfehlungs-Banner ───────────────────────────────────
+  if (!canMM && !canMR) {
+    html += `<div style="margin:0 16px 14px;background:#FFF3F0;border:1px solid rgba(232,101,10,.2);border-radius:14px;padding:14px">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--rust);margin-bottom:4px">⚠ Nicht genug Punkte</div>
+      <div style="font-size:12px;color:#6A6A6A;line-height:1.5">Weder Meilen noch MR reichen für diese Region. Punkte im Wallet aktualisieren oder Ziel wählen.</div>
+    </div>`;
+  } else if (clearWinner) {
+    const winSrc  = clearWinner === 'mm' ? 'Miles & More Meilen' : 'Amex MR';
+    const winEff  = clearWinner === 'mm' ? effMM : effMR;
+    const winCan  = clearWinner === 'mm' ? canMM : canMR;
+    html += `<div style="margin:0 16px 14px;background:#F0FAF7;border:1px solid rgba(10,143,122,.25);border-radius:14px;padding:14px">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--teal);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">◈ Empfehlung: Kein Kombi nötig</div>
+      <div style="font-size:13px;color:#1A1A1A;font-weight:600;margin-bottom:4px">${winSrc} für beide Richtungen</div>
+      <div style="font-size:12px;color:#6A6A6A;line-height:1.5">Der Unterschied zwischen beiden Optionen ist zu groß (${effDiff} Punkte). Es lohnt sich nicht, zwei separate Buchungsprozesse für minimalen Mehrwert zu machen. Nutze <strong>${winSrc}</strong> für Hin- und Rückflug.</div>
+      ${!winCan ? `<div style="margin-top:8px;font-size:11px;font-family:var(--mono);color:var(--rust)">⚠ Achtung: Aktuell nicht genug ${winSrc} vorhanden</div>` : ''}
+    </div>`;
+  } else if (kombiSinnvoll) {
+    const saving = Math.round((effMM + effMR) / 2);
+    html += `<div style="margin:0 16px 14px;background:linear-gradient(135deg,#F0FAF7,#FFFFFF);border:2px solid rgba(10,143,122,.3);border-radius:16px;padding:15px">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--teal);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">✦ Kombination sinnvoll</div>
+      <div style="font-size:14px;font-weight:700;color:#1A1A1A;margin-bottom:4px">Beide Töpfe optimal einsetzen</div>
+      <div style="font-size:12px;color:#6A6A6A;line-height:1.5;margin-bottom:8px">Beide Programme bieten ähnlich gute Konditionen (Δ ${effDiff} Punkte). Je eine Richtung aus M&M Meilen, eine aus Amex MR — so schonst du beide Bestände und maximierst den Gesamtwert.</div>
+      <div style="display:flex;gap:8px">
+        <span style="font-family:var(--mono);font-size:10px;background:rgba(10,143,122,.1);color:var(--teal);padding:4px 10px;border-radius:20px;border:1px solid rgba(10,143,122,.2)">Ø Score ${saving}/100</span>
+        <span style="font-family:var(--mono);font-size:10px;background:var(--gold-d);color:var(--gold2);padding:4px 10px;border-radius:20px;border:1px solid rgba(232,101,10,.2)">2 separate Buchungen</span>
+      </div>
+    </div>`;
+  } else if (canMM && !canMR) {
+    html += `<div style="margin:0 16px 14px;background:#FFF8F0;border:1px solid rgba(232,101,10,.2);border-radius:14px;padding:14px">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--gold2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">◈ Nur Meilen verfügbar</div>
+      <div style="font-size:12px;color:#6A6A6A;line-height:1.5">Nicht genug Amex MR für eine MR-Einlösung. Nutze M&M Meilen für beide Richtungen, oder transferiere zunächst MR zu Flying Blue / Avios.</div>
+    </div>`;
+  } else if (!canMM && canMR) {
+    html += `<div style="margin:0 16px 14px;background:#FFF8F0;border:1px solid rgba(232,101,10,.2);border-radius:14px;padding:14px">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--gold2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">◈ Nur MR verfügbar</div>
+      <div style="font-size:12px;color:#6A6A6A;line-height:1.5">Nicht genug M&M Meilen. Nutze Amex MR für beide Richtungen — oder sammle mehr Payback Punkte für das M&M Konto.</div>
+    </div>`;
+  }
+
+  // ── Optionen Hinflug ─────────────────────────────────────
+  html += renderKombiOptions(data.options, amex, mmTot, 'Hinflug', clearWinner);
+  html += renderKombiOptions(data.options, amex, mmTot, 'Rückflug', clearWinner);
+
+  document.getElementById('kombiResult').innerHTML = html;
+}
+
+function renderKombiOptions(options, amex, mmTot, label, clearWinner) {
+  const sorted = [...options].sort((a,b) => effKombi(b)-effKombi(a));
+  let html = `<div class="sec-lbl" style="padding:4px 16px 8px">✈ ${label} — Optionen</div><div style="padding:0 16px;margin-bottom:6px">`;
+
+  sorted.slice(0,4).forEach(opt => {
+    const isMR   = opt.type === 'mr';
+    const cost   = isMR ? opt.mrNeeded : opt.miles;
+    const canAff = isMR ? amex >= opt.mrNeeded : mmTot >= opt.miles;
+    const eff    = effKombi(opt);
+    const isWinner = clearWinner ? opt.type === clearWinner : false;
+    const isBest = sorted[0] === opt;
+    const ec     = eff>=75?'var(--teal)':eff>=50?'var(--gold2)':'var(--muted2)';
+    const srcCol = isMR ? 'var(--gold2)' : 'var(--teal)';
+    const srcBg  = isMR ? 'var(--gold-d)' : 'var(--teal-d)';
+    const border = canAff ? 'rgba(10,143,122,.25)' : 'var(--b1)';
+
+    html += `<div style="background:#FFFFFF;border:1px solid ${border};border-radius:14px;padding:13px 14px;margin-bottom:8px${isBest?' box-shadow:0 2px 8px rgba(0,0,0,.06)':''}">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <span style="font-family:var(--mono);font-size:10px;padding:3px 9px;border-radius:20px;background:${srcBg};color:${srcCol}">${isMR?'Amex MR':'M&M Meilen'}</span>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--muted2)">${PROG_LABEL[opt.prog]||opt.prog}</span>
+          ${isBest?'<span style="font-family:var(--mono);font-size:9px;background:rgba(10,143,122,.1);color:var(--teal);padding:2px 7px;border-radius:20px">Beste Option</span>':''}
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:'Familjen Grotesk',sans-serif;font-size:17px;font-weight:900;color:#1A1A1A">${cost.toLocaleString('de-DE')}</div>
+          <div style="font-size:9px;color:var(--muted);font-family:var(--mono)">${isMR?'MR':'MEILEN'}</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:#6A6A6A;margin-bottom:8px;line-height:1.5">${opt.note}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <span style="font-size:11px;font-family:var(--mono);color:var(--muted2)">~${opt.cashEur.toLocaleString('de-DE')} € Cashwert</span>
+        <span style="font-size:12px;font-family:var(--mono);font-weight:700;color:${ec}">Score ${eff}</span>
+      </div>
+      <div style="height:3px;background:var(--s2);border-radius:2px;overflow:hidden">
+        <div style="height:100%;border-radius:2px;background:${ec};width:${eff}%;transition:width .8s ease"></div>
+      </div>
+      ${canAff
+        ? `<div style="margin-top:8px;font-size:10px;font-family:var(--mono);color:var(--teal)">✓ Leistbar mit aktuellem Bestand</div>`
+        : `<div style="margin-top:8px;font-size:10px;font-family:var(--mono);color:var(--muted2)">↗ ${(isMR?opt.mrNeeded-amex:opt.miles-mmTot).toLocaleString('de-DE')} ${isMR?'MR':'Meilen'} fehlen noch</div>`
+      }
+    </div>`;
+  });
+
+  html += '</div>';
+  return html;
+}
+
+
+// ── Payback Bonus-Alert ─────────────────────────────────
+// Historische Bonus-Aktionen: Jan, Mai/Jun — prüfe aktuellen Monat
+function checkPaybackBonus() {
+  const now   = new Date();
+  const month = now.getMonth() + 1; // 1-12
+  const day   = now.getDate();
+
+  // Bekannte Aktionsfenster (historisch sehr zuverlässig)
+  const bonusPeriods = [
+    { month:1,  start:1,  end:31, bonus:'25%', label:'Januar-Bonus aktiv!' },
+    { month:5,  start:1,  end:31, bonus:'25%', label:'Mai-Bonus aktiv!' },
+    { month:6,  start:1,  end:15, bonus:'25%', label:'Juni-Bonus aktiv!' },
+  ];
+
+  // Nächste Aktionsperiode berechnen
+  const upcoming = [
+    { month:1,  label:'Januar' },
+    { month:5,  label:'Mai' },
+    { month:6,  label:'Juni' },
+  ];
+
+  const active = bonusPeriods.find(p => p.month===month && day>=p.start && day<=p.end);
+  const el = document.getElementById('pbBonusAlert');
+  if (!el) return;
+
+  if (active) {
+    el.style.display = 'block';
+    el.style.background = 'linear-gradient(135deg,#F0FAF7,#E8F8F2)';
+    el.style.border = '2px solid rgba(10,143,122,.3)';
+    el.innerHTML = `
+      <div style="font-family:var(--mono);font-size:10px;color:var(--teal);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px">🎯 ${active.label}</div>
+      <div style="font-size:14px;font-weight:700;color:#1A1A1A;margin-bottom:4px">Jetzt Payback → M&M transferieren!</div>
+      <div style="font-size:12px;color:#3A3A3A;line-height:1.5;margin-bottom:10px">
+        Aktuell gibt es <strong style="color:var(--teal)">${active.bonus} Bonus</strong> bei der Umwandlung von Payback Punkten in Miles & More Meilen. Mindestens 4.000 Punkte pro Transfer. Bonus gilt nur für manuelle Transfers.
+      </div>
+      <a href="https://www.payback.de/einloesen/meilen" target="_blank" style="display:inline-block;background:var(--teal);color:#fff;font-family:var(--mono);font-size:11px;padding:8px 14px;border-radius:10px;text-decoration:none;letter-spacing:.06em">Jetzt transferieren →</a>
+    `;
+  } else {
+    // Show upcoming alert
+    let nextMonth = upcoming.find(u => u.month > month) || upcoming[0];
+    el.style.display = 'block';
+    el.style.background = '#FAFAF8';
+    el.style.border = '1px solid var(--b2)';
+    el.innerHTML = `
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px">◈ Nächste Bonus-Aktion</div>
+      <div style="font-size:13px;color:#1A1A1A;font-weight:600;margin-bottom:3px">Voraussichtlich: ${nextMonth.label}</div>
+      <div style="font-size:11px;color:#6A6A6A;line-height:1.5">Payback bietet ca. 2× jährlich einen Transfer-Bonus von 20–30%. Aktuell kein Bonus aktiv — Punkte besser noch nicht transferieren und auf die Aktion warten.</div>
+    `;
+  }
+}
+
+// ── Mode Switcher ────────────────────────────────────────
+function switchMode(mode) {
+  ['classic','airport','inspire'].forEach(m => {
+    document.getElementById('mode-'+m+'-panel').style.display = m===mode?'block':'none';
+    const btn = document.getElementById('mode-'+m);
+    btn.style.background = m===mode ? 'var(--gold2)' : 'transparent';
+    btn.style.color = m===mode ? '#fff' : 'var(--muted2)';
+  });
+}
+
+// ── Airport Check ────────────────────────────────────────
+const EURO_AIRPORTS = [
+  { code:'HAJ', name:'Hannover',    country:'DE', hub:'LH', note:'Heimatflughafen — direkte LH-Anbindung' },
+  { code:'FRA', name:'Frankfurt',   country:'DE', hub:'LH', note:'Größter LH-Hub · beste Award-Verfügbarkeit' },
+  { code:'MUC', name:'München',     country:'DE', hub:'LH', note:'LH-Hub · oft günstiger als FRA' },
+  { code:'AMS', name:'Amsterdam',   country:'NL', hub:'KL', note:'KLM-Hub · Flying Blue Sweet Spot' },
+  { code:'CDG', name:'Paris CDG',   country:'FR', hub:'AF', note:'AF/Flying Blue-Hub · viele Promo Awards' },
+  { code:'LHR', name:'London LHR',  country:'GB', hub:'BA', note:'BA-Hub · Avios-Optionen sehr stark' },
+  { code:'MAD', name:'Madrid',      country:'ES', hub:'IB', note:'Iberia-Hub · günstige Avios nach USA' },
+  { code:'ZRH', name:'Zürich',      country:'CH', hub:'LX', note:'Swiss-Hub · M&M Partner · oft günstig' },
+  { code:'VIE', name:'Wien',        country:'AT', hub:'OS', note:'Austrian-Hub · M&M Partner' },
+  { code:'CPH', name:'Kopenhagen',  country:'DK', hub:'SK', note:'SAS-Hub · EuroBonus Sweet Spot' },
+  { code:'IST', name:'Istanbul',    country:'TR', hub:'TK', note:'TK-Hub · günstiger Zubringer nach Asien' },
+  { code:'FCO', name:'Rom FCO',     country:'IT', hub:'AZ', note:'Alitalia/ITA · Oneworld Partner' },
+];
+
+const DEST_DATA = {
+  JFK: { region:'NA', miles:{MM:54000,FB:50000,BA:60000,SAS:60000,SQ:75000,AC:60000,IB:34000,VS:50000,CX:75000}, cash:1850 },
+  LAX: { region:'NA', miles:{MM:58000,FB:54000,BA:62000,SAS:65000,SQ:75000,AC:65000,IB:40000,VS:55000,CX:80000}, cash:2000 },
+  ORD: { region:'NA', miles:{MM:52000,FB:50000,BA:60000,SAS:60000,SQ:75000,AC:55000,IB:38000,VS:52000,CX:75000}, cash:1750 },
+  NRT: { region:'AS', miles:{MM:60000,FB:62000,BA:80000,SAS:75000,SQ:67500,AC:65000,IB:90000,VS:60000,CX:54000}, cash:2400 },
+  SIN: { region:'AS', miles:{MM:62000,FB:65000,BA:80000,SAS:80000,SQ:67500,AC:68000,IB:95000,VS:65000,CX:52000}, cash:2350 },
+  HKG: { region:'AS', miles:{MM:65000,FB:68000,BA:72000,SAS:80000,SQ:67500,AC:70000,IB:95000,VS:62000,CX:50000}, cash:2200 },
+  BKK: { region:'AS', miles:{MM:58000,FB:58000,BA:70000,SAS:75000,SQ:60000,AC:65000,IB:88000,VS:58000,CX:52000}, cash:1950 },
+  GRU: { region:'SA', miles:{MM:76000,FB:72000,BA:68000,SAS:90000,SQ:99000,AC:75000,IB:50000,VS:80000,CX:99000}, cash:2700 },
+  DXB: { region:'ME', miles:{MM:46000,FB:46000,BA:43000,SAS:55000,SQ:60000,AC:50000,IB:50000,VS:45000,CX:55000}, cash:1600 },
+  NBO: { region:'AF', miles:{MM:44000,FB:44000,BA:50000,SAS:60000,SQ:70000,AC:55000,IB:55000,VS:48000,CX:65000}, cash:1500 },
+};
+
+// Positioning flight costs from HAJ (rough estimates in €)
+const POSITIONING = {
+  HAJ:0, FRA:30, MUC:60, AMS:50, CDG:70, LHR:90, MAD:110, ZRH:80, VIE:80, CPH:60, IST:120, FCO:100
+};
+
+function doAirportCheck() {
+  const dest    = document.getElementById('ap-dest').value;
+  const prog    = document.getElementById('ap-prog').value;
+  const month   = +document.getElementById('ap-month').value;
+  const destD   = DEST_DATA[dest];
+  if (!destD) return;
+
+  const mm    = +document.getElementById('mm-bal').value  || 0;
+  const amex  = +document.getElementById('amex-bal').value|| 0;
+  const pb    = +document.getElementById('pb-bal').value  || 0;
+  const mmTot = mm + pb;
+
+  // Calculate score for each airport × program combination
+  let results = [];
+  EURO_AIRPORTS.forEach(ap => {
+    const progs = prog === 'ALL' ? Object.keys(destD.miles) : [prog];
+    progs.forEach(p => {
+      const miles = destD.miles[p];
+      if (!miles) return;
+      const positionCost = POSITIONING[ap.code] || 80;
+      const totalCash = destD.cash + positionCost;
+      const cpmVal = totalCash / miles * 100;
+      const effVal = cpmVal>=4?Math.min(98,Math.round(85+(cpmVal-4)*5)):cpmVal>=3?Math.round(68+(cpmVal-3)*17):cpmVal>=2?Math.round(38+(cpmVal-2)*30):Math.round(cpmVal*19);
+      const canAfford = ['MM'].includes(p) ? mmTot>=miles : amex>=Math.round(miles/0.8);
+      results.push({ ap, prog:p, miles, cash:destD.cash, positionCost, totalCash, cpmVal, effVal, canAfford });
+    });
+  });
+
+  // Sort by effVal, dedupe to best per airport
+  results.sort((a,b) => b.effVal - a.effVal);
+  const seen = new Set();
+  const top = results.filter(r => { if(seen.has(r.ap.code)) return false; seen.add(r.ap.code); return true; }).slice(0,5);
+
+  const monthNames = ['','Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+
+  let html = `<div class="sec-lbl" style="padding:4px 16px 10px">Top Abflughäfen für ${dest} im ${monthNames[month]}</div>`;
+  html += '<div style="padding:0 16px;margin-bottom:14px">';
+
+  top.forEach((r, i) => {
+    const ec = r.effVal>=75?'var(--teal)':r.effVal>=50?'var(--gold2)':'var(--muted2)';
+    const isHome = r.ap.code === 'HAJ';
+    html += `<div style="background:#FFFFFF;border:1px solid ${r.canAfford?'rgba(10,143,122,.2)':'var(--b1)'};border-radius:14px;padding:13px 14px;margin-bottom:8px${isHome?' box-shadow:0 2px 8px rgba(232,101,10,.1)':''}">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
+        <div>
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px">
+            <span style="font-family:'Familjen Grotesk',sans-serif;font-size:20px;font-weight:900;color:#1A1A1A">${r.ap.code}</span>
+            <span style="font-size:12px;color:#3A3A3A;font-weight:600">${r.ap.name}</span>
+            ${isHome?'<span style="font-family:var(--mono);font-size:9px;background:var(--gold-d);color:var(--gold2);padding:2px 7px;border-radius:10px">Heimat</span>':''}
+            ${i===0?'<span style="font-family:var(--mono);font-size:9px;background:rgba(10,143,122,.1);color:var(--teal);padding:2px 7px;border-radius:10px">Bester Deal</span>':''}
+          </div>
+          <div style="font-size:11px;color:var(--muted2)">${r.ap.country} · ${r.ap.note}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:#1A1A1A">${r.miles.toLocaleString('de-DE')}</div>
+          <div style="font-size:9px;color:var(--muted);font-family:var(--mono)">${PNAME[r.prog]||r.prog}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+        <span style="font-family:var(--mono);font-size:10px;background:var(--s2);padding:3px 8px;border-radius:10px;color:var(--muted2)">~${r.cash.toLocaleString('de-DE')} € Flug</span>
+        ${r.positionCost>0?`<span style="font-family:var(--mono);font-size:10px;background:var(--s2);padding:3px 8px;border-radius:10px;color:var(--muted2)">+${r.positionCost} € Anreise</span>`:''}
+        <span style="font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:10px;background:${r.effVal>=75?'rgba(10,143,122,.1)':'var(--gold-d)'};color:${ec}">Score ${r.effVal}</span>
+        ${r.canAfford?'<span style="font-family:var(--mono);font-size:10px;background:rgba(10,143,122,.08);color:var(--teal);padding:3px 8px;border-radius:10px">✓ Leistbar</span>':''}
+      </div>
+      <div style="height:3px;background:var(--s2);border-radius:2px;overflow:hidden">
+        <div style="height:100%;border-radius:2px;background:${ec};width:${r.effVal}%;transition:width .8s ease"></div>
+      </div>
+    </div>`;
+  });
+
+  html += '</div>';
+  document.getElementById('airportResult').innerHTML = html;
+}
+
+// ── Inspiration Mode ─────────────────────────────────────
+const INSPIRE_DESTINATIONS = [
+  { city:'New York',    country:'USA',   emoji:'🗽', region:'NA', month:[4,5,9,10], style:['culture','food','mix'], weather:{temp:'16–22°C',rain:'mittel',sun:'gut'},   miles:{MM:54000,FB:50000,BA:34000}, reasons:['Frühling in Manhattan — perfektes Wetter für Central Park','Broadway-Saison auf Hochtouren','Keine Hochsommerhitze, angenehme Temperaturen'] },
+  { city:'Tokyo',       country:'Japan', emoji:'🗼', region:'AS', month:[4,5,10,11],style:['culture','food','mix'], weather:{temp:'14–20°C',rain:'gering',sun:'sehr gut'},miles:{MM:60000,FB:62000,SQ:67500},   reasons:['Kirschblüte im April/Mai — magische Atmosphäre','Herbst-Laub im Oktober faszinierender als jeder Park','Angenehme Temperaturen, wenig Regen'] },
+  { city:'Bangkok',     country:'Thailand',emoji:'🏯',region:'AS',month:[11,12,1,2],style:['beach','food','mix'],  weather:{temp:'28–34°C',rain:'gering',sun:'sehr gut'},miles:{MM:58000,FB:58000,SQ:60000},   reasons:['Trockenzeit — bestes Reisewetter des Jahres','Street Food auf Weltniveau zu Meilenpreisen','Floating Markets und Tempelanlagen ohne Monsunregen'] },
+  { city:'New York',    country:'USA',   emoji:'🗽', region:'NA', month:[9,10],     style:['culture','mix'],       weather:{temp:'16–22°C',rain:'mittel',sun:'gut'},   miles:{MM:54000,FB:50000,BA:34000}, reasons:['Golden Hour im Central Park im Herbst','US Open Stimmung und Fashion Week','Angenehme Temperaturen für Stadtbummel'] },
+  { city:'Singapur',    country:'Singapur',emoji:'🌆',region:'AS',month:[2,3,4,12], style:['food','culture','mix'],weather:{temp:'28–32°C',rain:'mittel',sun:'gut'},   miles:{MM:62000,SQ:67500,BA:80000},  reasons:['Weltklasse-Gastronomie von Hawker Centres bis Michelin','Gardens by the Bay im Abendlicht ein Erlebnis','Perfekter Stopp auf dem Weg nach Australien'] },
+  { city:'Dubai',       country:'UAE',   emoji:'🏙', region:'ME', month:[10,11,3,4],style:['beach','mix','culture'],weather:{temp:'24–30°C',rain:'selten',sun:'sehr gut'},miles:{MM:46000,BA:43000,FB:46000},  reasons:['Perfekte Temperaturen — kein Extremsommer','Desert Safari unter Sternenhimmel','Burj Khalifa Sonnenuntergang unschlagbar'] },
+  { city:'São Paulo',   country:'Brasilien',emoji:'🌿',region:'SA',month:[6,7,8],   style:['culture','food','mix'],weather:{temp:'16–22°C',rain:'gering',sun:'gut'},   miles:{MM:76000,IB:50000,FB:72000},  reasons:['Brasiliens Winter — angenehme Temperaturen, kein Regen','Biennale-Saison und Kulturhighlights','Günstiger als Rio mit mehr Substanz'] },
+  { city:'Nairobi',     country:'Kenia', emoji:'🦁', region:'AF', month:[7,8,1,2],  style:['nature','mix'],        weather:{temp:'18–24°C',rain:'gering',sun:'sehr gut'},miles:{MM:44000,BA:50000,FB:44000},  reasons:['Große Migration in der Masai Mara Juli–Oktober','Mildestes Wetter des Jahres in Nairobi','Safari-Erlebnis für M&M-Meilen kaum zu schlagen'] },
+  { city:'Los Angeles', country:'USA',   emoji:'🌴', region:'NA', month:[5,6,9,10], style:['beach','food','mix'],  weather:{temp:'20–26°C',rain:'selten',sun:'sehr gut'},miles:{MM:58000,IB:40000,VS:55000},  reasons:['Sommer ohne Hitze — perfekte Strand-Temperaturen','Napa Valley und PCH-Roadtrip von hier aus ideal','Filmlocations und Venice Beach vom Feinsten'] },
+  { city:'Hong Kong',   country:'HK',   emoji:'🌃', region:'AS', month:[10,11,3,4], style:['culture','food','mix'],weather:{temp:'20–26°C',rain:'gering',sun:'gut'},   miles:{MM:65000,CX:50000,BA:72000},  reasons:['Kühlere Trockenzeit — ideales Wander- und Stadtwetter','Dim Sum Frühstück und Nachtmarkt-Erlebnis','Victoria Peak Aussicht bei klarem Herbsthimmel'] },
+];
+
+async function doInspire() {
+  const month    = +document.getElementById('ins-month').value;
+  const style    = document.getElementById('ins-style').value;
+  const duration = document.getElementById('ins-duration').value;
+  const mm       = +document.getElementById('mm-bal').value  || 0;
+  const amex     = +document.getElementById('amex-bal').value|| 0;
+  const pb       = +document.getElementById('pb-bal').value  || 0;
+  const mmTot    = mm + pb;
+
+  const btn = document.getElementById('inspireBtn');
+  btn.disabled = true; btn.textContent = '✦ KI denkt nach...';
+
+  // Filter by month and style
+  let candidates = INSPIRE_DESTINATIONS.filter(d => {
+    const monthOk  = d.month.includes(month);
+    const styleOk  = style==='mix' || d.style.includes(style);
+    return monthOk && styleOk;
+  });
+
+  // Dedupe by city
+  const seen = new Set();
+  candidates = candidates.filter(d => { if(seen.has(d.city)) return false; seen.add(d.city); return true; });
+
+  // Sort by best available miles value
+  candidates = candidates.map(d => {
+    const bestMiles = Math.min(...Object.values(d.miles));
+    const cpmVal = d.miles.MM ? (1800/d.miles.MM*100) : 0;
+    const canAffordMM = mmTot >= (d.miles.MM||999999);
+    const canAffordMR = amex >= Math.round(Math.min(...Object.values(d.miles))/0.8);
+    return { ...d, bestMiles, cpmVal, canAffordMM, canAffordMR };
+  }).sort((a,b) => (b.canAffordMM||b.canAffordMR?1:0) - (a.canAffordMM||a.canAffordMR?1:0));
+
+  // Use top 4 or all if fewer
+  const top = candidates.slice(0, 4);
+
+  const monthNames = ['','Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  const durationLabel = {short:'4–6 Tage', week:'1 Woche', long:'2 Wochen'}[duration];
+
+  let html = `<div style="margin:0 16px 10px;font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase">
+    ✦ ${top.length} Ziele für ${monthNames[month]} · ${durationLabel}
+  </div>`;
+
+  top.forEach((d, i) => {
+    const bestProg = Object.entries(d.miles).sort((a,b)=>a[1]-b[1])[0];
+    const canAff = d.canAffordMM || d.canAffordMR;
+    const sunColor = d.weather.sun==='sehr gut'?'var(--gold2)':'var(--muted2)';
+
+    html += `<div style="background:#FFFFFF;border:1px solid ${canAff?'rgba(10,143,122,.2)':'var(--b1)'};border-radius:18px;padding:16px;margin:0 16px 12px;overflow:hidden;position:relative">
+      ${i===0?'<div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold2),transparent)"></div>':''}
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px">
+        <div>
+          <div style="font-size:28px;margin-bottom:4px">${d.emoji}</div>
+          <div style="font-family:'Familjen Grotesk',sans-serif;font-size:20px;font-weight:900;color:#1A1A1A;line-height:1">${d.city}</div>
+          <div style="font-size:12px;color:var(--muted2);margin-top:2px">${d.country}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:var(--mono);font-size:15px;font-weight:700;color:#1A1A1A">ab ${d.bestMiles.toLocaleString('de-DE')}</div>
+          <div style="font-size:9px;color:var(--muted);font-family:var(--mono)">MEILEN / MR</div>
+          ${canAff?'<div style="font-family:var(--mono);font-size:10px;color:var(--teal);margin-top:4px">✓ Leistbar</div>':''}
+        </div>
+      </div>
+
+      <!-- Wetter -->
+      <div style="background:#F5F4F0;border-radius:10px;padding:9px 11px;margin-bottom:10px;display:flex;gap:14px;align-items:center">
+        <div style="font-size:13px">🌤</div>
+        <div style="flex:1">
+          <div style="font-size:11px;font-weight:600;color:#1A1A1A">${d.weather.temp}</div>
+          <div style="font-size:10px;color:var(--muted2);font-family:var(--mono)">Regen: ${d.weather.rain} · Sonne: <span style="color:${sunColor}">${d.weather.sun}</span></div>
+        </div>
+      </div>
+
+      <!-- 3 Gründe -->
+      <div style="margin-bottom:12px">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">3 Gründe jetzt</div>
+        ${d.reasons.map((r,i) => `<div style="display:flex;gap:8px;margin-bottom:5px;align-items:flex-start">
+          <span style="font-family:var(--mono);font-size:10px;color:var(--gold2);flex-shrink:0;margin-top:1px">${i+1}.</span>
+          <span style="font-size:12px;color:#3A3A3A;line-height:1.4">${r}</span>
+        </div>`).join('')}
+      </div>
+
+      <!-- Programme -->
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        ${Object.entries(d.miles).map(([p,m]) => `<span style="font-family:var(--mono);font-size:10px;background:var(--s2);padding:3px 8px;border-radius:10px;color:var(--muted2)">${PNAME[p]||p}: ${m.toLocaleString('de-DE')}</span>`).join('')}
+      </div>
+    </div>`;
+  });
+
+  if(top.length === 0) {
+    html = `<div style="margin:0 16px;text-align:center;padding:30px;color:var(--muted);font-size:13px">Keine passenden Ziele für diese Kombination gefunden.<br>Reisestil oder Monat anpassen.</div>`;
+  }
+
+  document.getElementById('inspireResult').innerHTML = html;
+  btn.disabled = false; btn.textContent = '✦ Ziele vorschlagen lassen';
+}
+
+document.addEventListener('DOMContentLoaded', function init(){
+  const t=new Date(),e=new Date(t);e.setMonth(e.getMonth()+3);
+  document.getElementById('df').value=t.toISOString().slice(0,10);
+  document.getElementById('dt').value=e.toISOString().slice(0,10);
+  try{ document.getElementById('k-out').value=t.toISOString().slice(0,10); }catch(e){}
+  try{ document.getElementById('k-ret').value=e.toISOString().slice(0,10); }catch(e){}
+  updateWallet();renderBenefits();renderFeed();checkPaybackBonus();
+});
+</script>
+</body>
+</html>
