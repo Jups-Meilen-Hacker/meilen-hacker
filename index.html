@@ -443,7 +443,7 @@ body{font-family:'Familjen Grotesk',sans-serif;background:#F5F4F0;color:#1A1A1A;
 <!-- Topbar -->
 <div class="topbar">
   <div class="logo"><span class="logo-mark">✦</span> Meilen-Hacker</div>
-  <div class="status-pill"><span class="sdot" id="sdot"></span><span id="stxt">DEMO</span></div>
+  <div class="status-pill"><span class="sdot live" id="sdot"></span><span id="stxt">LIVE</span></div>
 </div>
 
 <!-- ══════ WALLET ══════ -->
@@ -923,6 +923,23 @@ body{font-family:'Familjen Grotesk',sans-serif;background:#F5F4F0;color:#1A1A1A;
 </nav>
 
 <script>
+// ── Seats.aero Live API ─────────────────────────────────
+const SEATS_API_KEY = 'pro_3Cu4unPaAXSuofIXNMhAq9bvcMp';
+const SEATS_API_BASE = 'https://seats.aero/partnerapi';
+
+// ── Seats.aero Program Mapping ───────────────────────────
+const PROG_TO_SOURCE = {
+  MM:  'united',      // Miles & More via Star Alliance
+  FB:  'airfrance',   // Flying Blue
+  BA:  'british',     // British Airways Avios
+  SAS: 'eurobonus',   // SAS EuroBonus
+  SQ:  'singapore',   // Singapore KrisFlyer
+  AC:  'aeroplan',    // Air Canada Aeroplan
+  IB:  'iberia',      // Iberia Plus
+  VS:  'virgin',      // Virgin Atlantic
+  CX:  'cathay',      // Cathay Pacific AsiaMiles
+};
+
 const FLIGHTS=[
   {id:1,prog:'MM',orig:'FRA',dest:'JFK',date:'2025-07-15',miles:54000,cashEur:1850,seats:4,airline:'Lufthansa',travel:'9h',region:'NA'},
   {id:2,prog:'FB',orig:'CDG',dest:'NRT',date:'2025-08-02',miles:62000,cashEur:2400,seats:2,airline:'Air France',travel:'12h',region:'AS'},
@@ -1132,33 +1149,123 @@ function tp(el){
 function cpm(d){return d.cashEur/d.miles*100}
 function eff(d){const c=cpm(d);if(c>=4)return Math.min(98,Math.round(85+(c-4)*5));if(c>=3)return Math.round(68+(c-3)*17);if(c>=2)return Math.round(38+(c-2)*30);return Math.round(c*19)}
 
-function doSearch(){
+async function doSearch(){
   const btn=document.getElementById('searchBtn');
-  btn.disabled=true;btn.textContent='Suche läuft…';
-  document.getElementById('dealsList').innerHTML='<div class="loader-wrap"><div class="loader"><span></span><span></span><span></span></div><div class="load-txt">Scanning availability…</div></div>';
+  btn.disabled=true; btn.innerHTML='<span>Suche läuft…</span>';
+  document.getElementById('dealsList').innerHTML='<div class="loader-wrap"><div class="loader"><span></span><span></span><span></span></div><div class="load-txt">Live-Daten werden geladen…</div></div>';
   document.getElementById('statsBar').classList.add('hidden');
   document.getElementById('resHdr').classList.add('hidden');
-  setTimeout(()=>{
-    const orig=document.getElementById('orig').value, reg=document.getElementById('reg').value;
-    const df=document.getElementById('df').value, dt=document.getElementById('dt').value;
-    const minE=+document.getElementById('minEff').value;
-    results=FLIGHTS.filter(d=>{
-      if(!activeProgs.has(d.prog)) return false;
-      if(reg!=='ALL'&&RDEST[reg]&&!RDEST[reg].includes(d.dest)) return false;
-      if(df&&d.date<df) return false;
-      if(dt&&d.date>dt) return false;
-      if(eff(d)<minE) return false;
-      return true;
-    });
+
+  const orig  = document.getElementById('orig').value;
+  const reg   = document.getElementById('reg').value;
+  const df    = document.getElementById('df').value;
+  const dt    = document.getElementById('dt').value;
+  const minE  = +document.getElementById('minEff').value;
+
+  // Build origin list
+  const origins = orig === 'ALL' ? ['HAJ','FRA','MUC','DUS','BER','HAM'] : [orig];
+
+  // Build program list
+  const progsToSearch = [...activeProgs].map(p => PROG_TO_SOURCE[p]).filter(Boolean);
+
+  let allResults = [];
+
+  try {
+    for (const source of progsToSearch.slice(0,3)) { // limit to 3 parallel programs
+      for (const originCode of origins.slice(0,2)) {
+        const params = new URLSearchParams({
+          cabin: 'business',
+          take:  '30',
+          origin_airport: originCode,
+        });
+        if (reg !== 'ALL' && RDEST[reg]) {
+          params.set('destination_airport', RDEST[reg].slice(0,6).join(','));
+        }
+        if (df) params.set('start_date', df);
+        if (dt) params.set('end_date', dt);
+
+        try {
+          const res = await fetch(`${SEATS_API_BASE}/availability?${params}`, {
+            headers: { 'Partner-Authorization': SEATS_API_KEY }
+          });
+
+          if (res.status === 401) {
+            showSearchError('API-Key ungültig. Bitte prüfen.');
+            btn.disabled=false; btn.innerHTML='Deals finden &nbsp;→';
+            return;
+          }
+
+          if (!res.ok) continue;
+          const json = await res.json();
+
+          if (json.data && json.data.length) {
+            const mapped = json.data
+              .filter(d => d.JAvailable || d.BusinessAvailable)
+              .map(d => ({
+                id:       d.ID || Math.random(),
+                prog:     Object.keys(PROG_TO_SOURCE).find(k => PROG_TO_SOURCE[k]===source) || source,
+                orig:     d.OriginAirport || originCode,
+                dest:     d.DestinationAirport || '???',
+                date:     d.Date ? d.Date.slice(0,10) : '',
+                miles:    d.JMileageCost || d.BusinessMileageCost || 0,
+                cashEur:  Math.round((d.JMileageCost || d.BusinessMileageCost || 0) * 0.03 * 1.1),
+                seats:    d.JAvailableSeats || d.AvailableSeats || 1,
+                airline:  d.Airlines ? d.Airlines[0] : source,
+                travel:   '—',
+                region:   reg !== 'ALL' ? reg : getRegion(d.DestinationAirport),
+                live:     true,
+              }));
+            allResults = allResults.concat(mapped);
+          }
+        } catch(e) { console.warn('API fetch error:', e); }
+      }
+    }
+
+    // Fallback to mock if no live results
+    if (allResults.length === 0) {
+      allResults = FLIGHTS.filter(d => {
+        if(!activeProgs.has(d.prog)) return false;
+        if(reg!=='ALL'&&RDEST[reg]&&!RDEST[reg].includes(d.dest)) return false;
+        if(df&&d.date<df) return false;
+        if(dt&&d.date>dt) return false;
+        return true;
+      });
+      document.getElementById('dealsList').insertAdjacentHTML('beforebegin',
+        '<div style="margin:0 16px 10px;font-family:var(--mono);font-size:10px;color:var(--muted2);text-align:center">Keine Live-Daten gefunden — Demo-Daten werden angezeigt</div>'
+      );
+    } else {
+      // Update status dot to live
+      document.getElementById('sdot').classList.add('live');
+      document.getElementById('stxt').textContent = 'LIVE';
+    }
+
+    results = allResults.filter(d => eff(d) >= minE && d.miles > 0);
     renderDeals();
+
     if(results.length){
       document.getElementById('statsBar').classList.remove('hidden');
       document.getElementById('sc').textContent=results.length;
       document.getElementById('sb').textContent=Math.max(...results.map(eff));
       document.getElementById('sa').textContent=(results.reduce((a,b)=>a+cpm(b),0)/results.length).toFixed(2)+'€';
     }
-    btn.disabled=false;btn.innerHTML='Deals finden &nbsp;→';
-  },800);
+
+  } catch(e) {
+    showSearchError('Verbindungsfehler: ' + e.message);
+  }
+
+  btn.disabled=false; btn.innerHTML='Deals finden &nbsp;→';
+}
+
+function showSearchError(msg) {
+  document.getElementById('dealsList').innerHTML = `<div style="margin:0 16px;background:#FFF3F0;border:1px solid rgba(232,101,10,.2);border-radius:14px;padding:14px;font-size:13px;color:#3A3A3A">${msg}</div>`;
+}
+
+function getRegion(iata) {
+  if (!iata) return 'ALL';
+  for (const [r, codes] of Object.entries(RDEST)) {
+    if (codes.includes(iata)) return r;
+  }
+  return 'ALL';
 }
 
 function renderDeals(){
